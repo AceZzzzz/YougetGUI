@@ -62,9 +62,9 @@ public class Controller implements Initializable {
                 }
 
                 // something wrong with get video info
-//                for (DownloadData downloadData : downloadList.getItems()) {
-//                    Looper.postTask(new UpdateVideoInfoTask(downloadData));
-//                }
+                for (DownloadData downloadData : downloadList.getItems()) {
+                    Looper.postTask(new UpdateVideoInfoTask(downloadData));
+                }
 
                 for (DownloadData downloadData : downloadList.getItems()) {
                     Looper.postTask(new DownloadTask(downloadData));

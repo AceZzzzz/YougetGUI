@@ -32,6 +32,10 @@ public class VideoDownload extends Executor {
                     System.out.println(newValue);
                 }
 
+                if (findName[0]) {
+                    return;
+                }
+
                 {
                     Matcher matcher = TITLE_REGEX.matcher(newValue);
                     if (matcher.matches()) {
@@ -127,7 +131,7 @@ public class VideoDownload extends Executor {
 
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern TITLE_REGEX = Pattern.compile(".*title:(?<name>.+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TITLE_REGEX = Pattern.compile(".*((title)|(playlist)):(?<name>.+)", Pattern.CASE_INSENSITIVE);
 
     private class ProgressChecker extends Thread {
 

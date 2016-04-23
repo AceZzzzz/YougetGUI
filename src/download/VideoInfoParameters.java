@@ -16,7 +16,8 @@ public class VideoInfoParameters implements Parameters {
     @Override
     public List<String> build() {
         List<String> command = new ArrayList<>();
-        command.add("-i");
+        // something is wrong with "-i"
+        command.add("-u");
         command.add(url);
         return command;
     }
