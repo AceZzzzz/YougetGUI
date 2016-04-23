@@ -12,15 +12,15 @@ public class DownloadData {
 
     private final StringProperty url = new SimpleStringProperty();
 
-    private final StringProperty progress = new SimpleStringProperty();
+    private final StringProperty progress = new SimpleStringProperty("等待下载...");
 
-    private final ObjectProperty<File> saveDir = new SimpleObjectProperty<>();
+    private final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
 
     private final StringProperty name = new SimpleStringProperty();
 
-    public DownloadData(String url, File saveDir) {
+    public DownloadData(String url, File downloadDirectory) {
         this.url.set(url);
-        this.saveDir.set(saveDir);
+        this.downloadDirectory.set(downloadDirectory);
     }
 
     public void setProgress(String progress) {
@@ -39,12 +39,12 @@ public class DownloadData {
         return name;
     }
 
-    public File getSaveDir() {
-        return saveDir.get();
+    public File getDownloadDir() {
+        return downloadDirectory.get();
     }
 
-    public ObjectProperty<File> saveDirProperty() {
-        return saveDir;
+    public ObjectProperty<File> downloadDirectoryProperty() {
+        return downloadDirectory;
     }
 
     public String getUrl() {

@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.BorderPane?>
-
-<BorderPane prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sample.Controller">
     <bottom>
         <ToolBar BorderPane.alignment="CENTER">
             <items>
-                <Button fx:id="startDownloadView" mnemonicParsing="false" onAction="#onStartDownloadClick" text="开始下载" />
-                <Button fx:id="stopDownloadView" mnemonicParsing="false" onAction="#onStopDownloadClick" text="停止下载" />
-                <Button mnemonicParsing="false" onAction="#onSetDownloadDirectoryClick" text="设置下载目录" />
-                <Label fx:id="downloadDirectoryView" />
+                <Button fx:id="startDownloadView" mnemonicParsing="false" onAction="#onStartDownloadClick" text="开始下载"/>
+                <Button fx:id="stopDownloadView" mnemonicParsing="false" onAction="#onStopDownloadClick" text="停止下载"/>
+                <Button mnemonicParsing="false" onAction="#onSetDownloadDirectoryClick" text="设置下载目录"/>
+                <Label fx:id="downloadDirectoryView"/>
             </items>
         </ToolBar>
     </bottom>
@@ -21,9 +19,15 @@
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <menus>
-                <Menu mnemonicParsing="false" text="编辑">
+                <Menu mnemonicParsing="false" text="文件">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#onAddUrl" text="新建" />
+                        <MenuItem mnemonicParsing="false" onAction="#onAddUrl" text="新建">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP"
+                                                    shift="UP"
+                                                    shortcut="UP"/>
+                            </accelerator>
+                        </MenuItem>
                     </items>
                 </Menu>
             </menus>
@@ -33,19 +37,20 @@
     <center>
         <TableView fx:id="downloadList" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="videoUrlColumn" maxWidth="80" minWidth="80" text="下载链接" />
-                <TableColumn fx:id="videoNameColumn" text="视频名称" />
-                <TableColumn fx:id="downloadProgressColumn" maxWidth="150" minWidth="150" text="进度" />
-                <TableColumn fx:id="downloadDirectoryColumn" maxWidth="80" minWidth="80" text="下载位置" />
+                <TableColumn fx:id="videoUrlColumn" maxWidth="80" minWidth="80" text="下载链接"/>
+                <TableColumn fx:id="videoNameColumn" text="视频名称"/>
+                <TableColumn fx:id="downloadProgressColumn" maxWidth="150" minWidth="150" text="进度"/>
+                <TableColumn fx:id="downloadDirectoryColumn" maxWidth="80" minWidth="80" text="下载位置"/>
             </columns>
 
             <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
+
             <contextMenu>
                 <ContextMenu>
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                        <MenuItem mnemonicParsing="false" text="打开所在目录" onAction="#onOpenSaveDirectory"/>
                     </items>
                 </ContextMenu>
             </contextMenu>

@@ -15,6 +15,7 @@ import util.Task;
 import view.VideoUrlInputDialog;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
@@ -25,7 +26,7 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         videoUrlColumn.setCellValueFactory(new PropertyValueFactory<>("url"));
         downloadProgressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
-        downloadDirectoryColumn.setCellValueFactory(new PropertyValueFactory<>("saveDir"));
+        downloadDirectoryColumn.setCellValueFactory(new PropertyValueFactory<>("downloadDirectory"));
         videoNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         startDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty());
         stopDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty().not());
@@ -81,6 +82,15 @@ public class Controller implements Initializable {
             }
 
         });
+    }
+
+    @FXML
+    private void onOpenSaveDirectory(ActionEvent event) {
+        try {
+            java.awt.Desktop.getDesktop().open(downloadList.getSelectionModel().getSelectedItem().getDownloadDir());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

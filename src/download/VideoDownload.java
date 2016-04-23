@@ -22,6 +22,7 @@ public class VideoDownload extends Executor {
 
     public void download(DownloadData downloadData) {
         this.downloadData = downloadData;
+        isFirstRun = true;
 
         ChangeListener<String> listener = new ChangeListener<String>() {
 
@@ -58,7 +59,7 @@ public class VideoDownload extends Executor {
             isFirstRun = false;
             shouldRestartDownload = false;
             updateProgressOnUiThread("开始下载");
-            execute(new VideoDownloadParameters(downloadData.getSaveDir(), downloadData.getUrl()), false);
+            execute(new VideoDownloadParameters(downloadData.getDownloadDir(), downloadData.getUrl()), false);
             updateProgressOnUiThread("下载完成");
         }
 
