@@ -39,27 +39,18 @@ public class VideoDownload extends Executor {
                         updateNameOnUiThread(matcher.group("name").trim());
                     }
                 }
-
-                {
-                    Matcher matcher = PLAYLIST_REGEX.matcher(newValue);
-                    if (matcher.matches()) {
-                        findName[0] = true;
-                        updateNameOnUiThread(matcher.group("name").trim());
-                    }
-                }
             }
         };
         statusProperty().addListener(listener);
         execute(new VideoInfoParameters(downloadData.getUrl()), false);
         if (!findName[0]) {
-            updateNameOnUiThread("没有在该网址上发现视频");
+            updateNameOnUiThread("错误的视频网址");
         }
         statusProperty().removeListener(listener);
     }
 
     public void download(DownloadData downloadData) {
         this.downloadData = downloadData;
-        isFirstRun = true;
 
         ChangeListener<String> listener = new ChangeListener<String>() {
 
@@ -89,6 +80,7 @@ public class VideoDownload extends Executor {
         statusProperty().addListener(listener);
         isDownloading.set(true);
 
+        boolean isFirstRun = true;
         while (isFirstRun || shouldRestartDownload) {
             isFirstRun = false;
             shouldRestartDownload = false;
@@ -125,8 +117,6 @@ public class VideoDownload extends Executor {
 
     private DownloadData downloadData;
 
-    private boolean isFirstRun = true;
-
     private boolean shouldRestartDownload = false;
 
     private final BooleanProperty isDownloading = new SimpleBooleanProperty();
@@ -138,8 +128,6 @@ public class VideoDownload extends Executor {
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern TITLE_REGEX = Pattern.compile(".*title:(?<name>.+)", Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern PLAYLIST_REGEX = Pattern.compile("playlist:(?<name>.+)", Pattern.CASE_INSENSITIVE);
 
     private class ProgressChecker extends Thread {
 

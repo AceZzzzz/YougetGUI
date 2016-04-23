@@ -16,7 +16,7 @@ public class DownloadData {
 
     private final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
 
-    private final StringProperty name = new SimpleStringProperty("加载中...");
+    private final StringProperty name = new SimpleStringProperty("等待加载...");
 
     public DownloadData(String url, File downloadDirectory) {
         this.url.set(url);
