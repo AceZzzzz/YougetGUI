@@ -3,10 +3,7 @@ package sample;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ui.SmartDirectoryChooser;
 import util.Looper;
@@ -28,6 +25,7 @@ public class Controller implements Initializable {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         startDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty());
         stopDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty().not());
+        downloadDirectoryView.textProperty().bind(directoryChooser.lastDirectoryProperty().asString());
     }
 
     @FXML
@@ -62,7 +60,7 @@ public class Controller implements Initializable {
 
             @Override
             public void accept(String s) {
-                downloadList.getItems().add(new DownloadData(s, SmartDirectoryChooser.getLastDirectory()));
+                downloadList.getItems().add(new DownloadData(s, directoryChooser.lastDirectoryProperty().get()));
             }
 
         });
@@ -75,9 +73,13 @@ public class Controller implements Initializable {
 
     @FXML
     private void onSetDownloadDirectoryClick() {
-        SmartDirectoryChooser directoryChooser = new SmartDirectoryChooser();
         directoryChooser.show(downloadList.getScene().getWindow());
     }
+
+    private SmartDirectoryChooser directoryChooser = new SmartDirectoryChooser();
+
+    @FXML
+    private Label downloadDirectoryView;
 
     @FXML
     private Button startDownloadView;

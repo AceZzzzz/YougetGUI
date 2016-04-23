@@ -9,14 +9,15 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sample.Controller">
     <bottom>
         <ToolBar BorderPane.alignment="CENTER">
             <items>
-                <Button mnemonicParsing="false" onAction="#onStartDownloadClick" text="开始下载" fx:id="startDownloadView"/>
-                <Button mnemonicParsing="false" onAction="#onStopDownloadClick" text="停止下载" fx:id="stopDownloadView"/>
+                <Button fx:id="startDownloadView" mnemonicParsing="false" onAction="#onStartDownloadClick" text="开始下载"/>
+                <Button fx:id="stopDownloadView" mnemonicParsing="false" onAction="#onStopDownloadClick" text="停止下载"/>
                 <Button mnemonicParsing="false" onAction="#onSetDownloadDirectoryClick" text="设置下载目录"/>
+                <Label fx:id="downloadDirectoryView"/>
             </items>
         </ToolBar>
     </bottom>
@@ -34,12 +35,12 @@
     </top>
 
     <center>
-        <TableView BorderPane.alignment="CENTER" fx:id="downloadList">
+        <TableView fx:id="downloadList" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn text="下载链接" fx:id="urlColumn"/>
-                <TableColumn text="视频名称" fx:id="nameColumn"/>
-                <TableColumn text="下载位置" fx:id="downloadDirColumn"/>
-                <TableColumn text="下载状态" fx:id="statusColumn"/>
+                <TableColumn fx:id="urlColumn" text="下载链接"/>
+                <TableColumn fx:id="nameColumn" text="视频名称"/>
+                <TableColumn fx:id="downloadDirColumn" text="下载位置"/>
+                <TableColumn fx:id="statusColumn" text="下载状态"/>
             </columns>
 
             <columnResizePolicy>

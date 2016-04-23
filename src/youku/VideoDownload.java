@@ -107,7 +107,7 @@ public class VideoDownload extends Executor {
             setDaemon(true);
         }
 
-        private final long CHECK_INTERVAL = 1 * 60;
+        private final long CHECK_INTERVAL = 30;
 
         // MB/s
         private final double MIN_DOWNLOAD_SPEED = 0.1;
