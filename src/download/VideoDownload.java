@@ -21,6 +21,28 @@ public class VideoDownload extends Executor {
         new ProgressChecker().start();
     }
 
+    public void updateVideoInfo(DownloadData downloadData) {
+        this.downloadData = downloadData;
+        ChangeListener<String> listener = new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (Debug.LOG) {
+                    System.out.println(newValue);
+                }
+
+
+                Matcher matcher = NAME_REGEX.matcher(newValue);
+                if (matcher.matches()) {
+                    updateNameOnUiThread(matcher.group("name").trim());
+                }
+            }
+        };
+        statusProperty().addListener(listener);
+        execute(new VideoInfoParameters(downloadData.getUrl()), false);
+        statusProperty().removeListener(listener);
+    }
+
     public void download(DownloadData downloadData) {
         this.downloadData = downloadData;
         isFirstRun = true;
