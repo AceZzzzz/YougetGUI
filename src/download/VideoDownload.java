@@ -23,6 +23,7 @@ public class VideoDownload extends Executor {
 
     public void updateVideoInfo(DownloadData downloadData) {
         this.downloadData = downloadData;
+        boolean[] findName = new boolean[]{false};
         ChangeListener<String> listener = new ChangeListener<String>() {
 
             @Override
@@ -34,12 +35,16 @@ public class VideoDownload extends Executor {
 
                 Matcher matcher = NAME_REGEX.matcher(newValue);
                 if (matcher.matches()) {
+                    findName[0] = true;
                     updateNameOnUiThread(matcher.group("name").trim());
                 }
             }
         };
         statusProperty().addListener(listener);
         execute(new VideoInfoParameters(downloadData.getUrl()), false);
+        if (!findName[0]) {
+            updateNameOnUiThread("没有在该网址上发现视频");
+        }
         statusProperty().removeListener(listener);
     }
 
