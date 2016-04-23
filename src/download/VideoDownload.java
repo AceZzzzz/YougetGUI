@@ -1,4 +1,4 @@
-package youku;
+package download;
 
 import executor.Executor;
 import javafx.application.Platform;
@@ -31,6 +31,13 @@ public class VideoDownload extends Executor {
                     Matcher matcher = NAME_REGEX.matcher(newValue);
                     if (matcher.matches()) {
                         updateNameOnUiThread(matcher.group("name").trim());
+                    }
+                }
+
+                {
+                    Matcher matcher = MERGING_REGEX.matcher(newValue);
+                    if (matcher.matches()) {
+                        System.out.println("合并文件中");
                     }
                 }
 
@@ -101,6 +108,8 @@ public class VideoDownload extends Executor {
 
     private static final Pattern NAME_REGEX = Pattern.compile("title:(?<name>.+)", Pattern.CASE_INSENSITIVE);
 
+    private static final Pattern MERGING_REGEX = Pattern.compile("Merging video parts", Pattern.CASE_INSENSITIVE);
+
     private class ProgressChecker extends Thread {
 
         public ProgressChecker() {
@@ -131,7 +140,7 @@ public class VideoDownload extends Executor {
                         continue;
                     }
 
-                    System.out.println(downloadedData.get() + "," + lastDownloadedData + "," + totalData.get());
+                    System.out.println(lastDownloadedData + ", " + downloadedData.get() + "/" + totalData.get());
 
                     if (lastDownloadedData > downloadedData.get()) {
                         lastDownloadedData = downloadedData.get();

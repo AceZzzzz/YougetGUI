@@ -8,7 +8,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import ui.SmartDirectoryChooser;
 import util.Looper;
 import util.Task;
-import youku.VideoDownload;
+import download.VideoDownload;
 
 import java.io.File;
 import java.net.URL;
@@ -33,20 +33,29 @@ public class Controller implements Initializable {
         Looper.removeTask(MSG_DOWNLOAD);
 
         for (DownloadData downloadData : downloadList.getItems()) {
-            Looper.postTask(new Task(MSG_DOWNLOAD, 0) {
-
-                @Override
-                public void cancel() {
-                    videoDownload.forceCancel();
-                }
-
-                @Override
-                public void run() {
-                    videoDownload.save(downloadData);
-                }
-
-            });
+            Looper.postTask(new DownloadTask(downloadData));
         }
+    }
+
+    private class DownloadTask extends Task {
+
+        private final DownloadData downloadData;
+
+        public DownloadTask(DownloadData downloadData) {
+            super(MSG_DOWNLOAD, 0);
+            this.downloadData = downloadData;
+        }
+
+        @Override
+        public void run() {
+            videoDownload.save(downloadData);
+        }
+
+        @Override
+        public void cancel() {
+            videoDownload.forceCancel();
+        }
+
     }
 
     @FXML
@@ -60,7 +69,12 @@ public class Controller implements Initializable {
 
             @Override
             public void accept(String s) {
-                downloadList.getItems().add(new DownloadData(s, directoryChooser.lastDirectoryProperty().get()));
+                DownloadData downloadData = new DownloadData(s, directoryChooser.lastDirectoryProperty().get());
+                downloadList.getItems().add(downloadData);
+
+                if (videoDownload.isDownloadingProperty().get()) {
+                    Looper.postTask(new DownloadTask(downloadData));
+                }
             }
 
         });
