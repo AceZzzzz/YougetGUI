@@ -1,5 +1,6 @@
 package download;
 
+import debug.Debug;
 import executor.Executor;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -28,7 +29,9 @@ public class VideoDownload extends Executor {
 
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                System.out.println(newValue);
+                if (Debug.LOG) {
+                    System.out.println(newValue);
+                }
 
                 {
                     Matcher matcher = NAME_REGEX.matcher(newValue);
