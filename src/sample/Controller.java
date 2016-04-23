@@ -4,10 +4,7 @@ import download.VideoDownload;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ui.SmartDirectoryChooser;
 import util.Looper;
@@ -24,7 +21,6 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        videoUrlColumn.setCellValueFactory(new PropertyValueFactory<>("url"));
         downloadProgressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
         downloadDirectoryColumn.setCellValueFactory(new PropertyValueFactory<>("downloadDirectory"));
         videoNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -147,9 +143,6 @@ public class Controller implements Initializable {
 
     @FXML
     private TableView<DownloadData> downloadList;
-
-    @FXML
-    private TableColumn<DownloadData, String> videoUrlColumn;
 
     @FXML
     private TableColumn<DownloadData, String> downloadProgressColumn;

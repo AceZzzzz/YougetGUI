@@ -33,10 +33,20 @@ public class VideoDownload extends Executor {
                 }
 
 
-                Matcher matcher = NAME_REGEX.matcher(newValue);
-                if (matcher.matches()) {
-                    findName[0] = true;
-                    updateNameOnUiThread(matcher.group("name").trim());
+                {
+                    Matcher matcher = TITLE_REGEX.matcher(newValue);
+                    if (matcher.matches()) {
+                        findName[0] = true;
+                        updateNameOnUiThread(matcher.group("name").trim());
+                    }
+                }
+
+                {
+                    Matcher matcher = PLAYLIST_REGEX.matcher(newValue);
+                    if (matcher.matches()) {
+                        findName[0] = true;
+                        updateNameOnUiThread(matcher.group("name").trim());
+                    }
                 }
             }
         };
@@ -61,7 +71,7 @@ public class VideoDownload extends Executor {
                 }
 
                 {
-                    Matcher matcher = NAME_REGEX.matcher(newValue);
+                    Matcher matcher = TITLE_REGEX.matcher(newValue);
                     if (matcher.matches()) {
                         updateNameOnUiThread(matcher.group("name").trim());
                     }
@@ -139,7 +149,9 @@ public class VideoDownload extends Executor {
 
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern NAME_REGEX = Pattern.compile("title:(?<name>.+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TITLE_REGEX = Pattern.compile("title:(?<name>.+)", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern PLAYLIST_REGEX = Pattern.compile("playlist:(?<name>.+)", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern MERGING_REGEX = Pattern.compile("Merging video parts.*", Pattern.CASE_INSENSITIVE);
 

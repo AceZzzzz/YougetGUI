@@ -37,9 +37,8 @@
     <center>
         <TableView fx:id="downloadList" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="videoUrlColumn" maxWidth="80" minWidth="80" text="下载链接"/>
                 <TableColumn fx:id="videoNameColumn" text="视频名称"/>
-                <TableColumn fx:id="downloadProgressColumn" maxWidth="150" minWidth="150" text="进度"/>
+                <TableColumn fx:id="downloadProgressColumn" maxWidth="120" minWidth="120" text="进度"/>
                 <TableColumn fx:id="downloadDirectoryColumn" maxWidth="80" minWidth="80" text="下载位置"/>
             </columns>
 
