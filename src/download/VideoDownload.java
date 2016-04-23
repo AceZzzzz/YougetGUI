@@ -28,6 +28,8 @@ public class VideoDownload extends Executor {
 
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                System.out.println(newValue);
+
                 {
                     Matcher matcher = NAME_REGEX.matcher(newValue);
                     if (matcher.matches()) {
@@ -35,12 +37,12 @@ public class VideoDownload extends Executor {
                     }
                 }
 
-                {
-                    Matcher matcher = MERGING_REGEX.matcher(newValue);
-                    if (matcher.matches()) {
-                        updateProgressOnUiThread("合并文件中");
-                    }
-                }
+//                {
+//                    Matcher matcher = MERGING_REGEX.matcher(newValue);
+//                    if (matcher.matches()) {
+//                        updateProgressOnUiThread("合并文件中...");
+//                    }
+//                }
 
                 for (String split : newValue.split(" ")) {
                     Matcher matcher = PROGRESS_REGEX.matcher(split);
