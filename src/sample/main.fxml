@@ -8,8 +8,6 @@
     <bottom>
         <ToolBar BorderPane.alignment="CENTER">
             <items>
-                <Button fx:id="startDownloadView" mnemonicParsing="false" onAction="#onStartDownloadClick" text="开始下载"/>
-                <Button fx:id="stopDownloadView" mnemonicParsing="false" onAction="#onStopDownloadClick" text="停止下载"/>
                 <Button mnemonicParsing="false" onAction="#onSetDownloadDirectoryClick" text="设置下载目录"/>
                 <Label fx:id="downloadDirectoryView"/>
             </items>

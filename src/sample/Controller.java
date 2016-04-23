@@ -24,18 +24,7 @@ public class Controller implements Initializable {
         downloadProgressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
         downloadDirectoryColumn.setCellValueFactory(new PropertyValueFactory<>("downloadDirectory"));
         videoNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        startDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty());
-        stopDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty().not());
         downloadDirectoryView.textProperty().bind(directoryChooser.lastDirectoryProperty().asString());
-    }
-
-    @FXML
-    private void onStartDownloadClick(ActionEvent event) {
-        Looper.removeTask(MSG_DOWNLOAD);
-
-        for (DownloadData downloadData : downloadList.getItems()) {
-            Looper.postTask(new DownloadTask(downloadData));
-        }
     }
 
     private class DownloadTask extends Task {
@@ -70,17 +59,15 @@ public class Controller implements Initializable {
                 for (String split : s.split("\n")) {
                     DownloadData downloadData = new DownloadData(split, directoryChooser.lastDirectoryProperty().get());
                     downloadList.getItems().add(downloadData);
-                    Looper.postTask(new UpdateVideoInfoTask(downloadData));
                 }
+
+                // something wrong with get video info
+//                for (DownloadData downloadData : downloadList.getItems()) {
+//                    Looper.postTask(new UpdateVideoInfoTask(downloadData));
+//                }
 
                 for (DownloadData downloadData : downloadList.getItems()) {
-                    Looper.postTask(new UpdateVideoInfoTask(downloadData));
-                }
-
-                if (videoDownload.isDownloadingProperty().get()) {
-                    for (DownloadData downloadData : downloadList.getItems()) {
-                        Looper.postTask(new DownloadTask(downloadData));
-                    }
+                    Looper.postTask(new DownloadTask(downloadData));
                 }
             }
 
@@ -120,11 +107,6 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void onStopDownloadClick(ActionEvent event) {
-        Looper.removeTask(MSG_DOWNLOAD);
-    }
-
-    @FXML
     private void onSetDownloadDirectoryClick() {
         directoryChooser.show(downloadList.getScene().getWindow());
     }
@@ -133,12 +115,6 @@ public class Controller implements Initializable {
 
     @FXML
     private Label downloadDirectoryView;
-
-    @FXML
-    private Button startDownloadView;
-
-    @FXML
-    private Button stopDownloadView;
 
     @FXML
     private TableColumn<DownloadData, String> videoNameColumn;

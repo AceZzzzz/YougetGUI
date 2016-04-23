@@ -32,7 +32,6 @@ public class VideoDownload extends Executor {
                     System.out.println(newValue);
                 }
 
-
                 {
                     Matcher matcher = TITLE_REGEX.matcher(newValue);
                     if (matcher.matches()) {
@@ -76,13 +75,6 @@ public class VideoDownload extends Executor {
                         updateNameOnUiThread(matcher.group("name").trim());
                     }
                 }
-
-//                {
-//                    Matcher matcher = MERGING_REGEX.matcher(newValue);
-//                    if (matcher.matches()) {
-//                        updateProgressOnUiThread("合并文件中...");
-//                    }
-//                }
 
                 for (String split : newValue.split(" ")) {
                     Matcher matcher = PROGRESS_REGEX.matcher(split);
@@ -137,10 +129,6 @@ public class VideoDownload extends Executor {
 
     private boolean shouldRestartDownload = false;
 
-    public BooleanProperty isDownloadingProperty() {
-        return isDownloading;
-    }
-
     private final BooleanProperty isDownloading = new SimpleBooleanProperty();
 
     private final DoubleProperty downloadedSize = new SimpleDoubleProperty();
@@ -149,11 +137,9 @@ public class VideoDownload extends Executor {
 
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern TITLE_REGEX = Pattern.compile("title:(?<name>.+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TITLE_REGEX = Pattern.compile(".*title:(?<name>.+)", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern PLAYLIST_REGEX = Pattern.compile("playlist:(?<name>.+)", Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern MERGING_REGEX = Pattern.compile("Merging video parts.*", Pattern.CASE_INSENSITIVE);
 
     private class ProgressChecker extends Thread {
 
