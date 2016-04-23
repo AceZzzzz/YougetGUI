@@ -19,10 +19,10 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        urlColumn.setCellValueFactory(new PropertyValueFactory<>("url"));
-        progressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
-        downloadDirColumn.setCellValueFactory(new PropertyValueFactory<>("saveDir"));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        videoUrlColumn.setCellValueFactory(new PropertyValueFactory<>("url"));
+        downloadProgressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
+        downloadDirectoryColumn.setCellValueFactory(new PropertyValueFactory<>("saveDir"));
+        videoNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         startDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty());
         stopDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty().not());
         downloadDirectoryView.textProperty().bind(directoryChooser.lastDirectoryProperty().asString());
@@ -102,19 +102,19 @@ public class Controller implements Initializable {
     private Button stopDownloadView;
 
     @FXML
-    private TableColumn<DownloadData, String> nameColumn;
+    private TableColumn<DownloadData, String> videoNameColumn;
 
     @FXML
-    private TableColumn<DownloadData, File> downloadDirColumn;
+    private TableColumn<DownloadData, File> downloadDirectoryColumn;
 
     @FXML
     private TableView<DownloadData> downloadList;
 
     @FXML
-    private TableColumn<DownloadData, String> urlColumn;
+    private TableColumn<DownloadData, String> videoUrlColumn;
 
     @FXML
-    private TableColumn<DownloadData, String> progressColumn;
+    private TableColumn<DownloadData, String> downloadProgressColumn;
 
     private VideoDownload videoDownload = new VideoDownload();
 

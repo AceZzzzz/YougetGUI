@@ -37,16 +37,16 @@ public class VideoDownload extends Executor {
                 {
                     Matcher matcher = MERGING_REGEX.matcher(newValue);
                     if (matcher.matches()) {
-                        System.out.println("合并文件中");
+                        updateProgressOnUiThread("合并文件中");
                     }
                 }
 
                 for (String split : newValue.split(" ")) {
                     Matcher matcher = PROGRESS_REGEX.matcher(split);
                     if (matcher.matches()) {
-                        downloadedData.set(Double.parseDouble(matcher.group("downloaded")));
-                        totalData.set(Double.parseDouble(matcher.group("total")));
-                        updateStatusOnUiThread();
+                        downloadedSize.set(Double.parseDouble(matcher.group("downloaded")));
+                        totalSize.set(Double.parseDouble(matcher.group("total")));
+                        updateProgressOnUiThread("" + downloadedSize.get() + "/" + totalSize.get() + " MB");
                     }
                 }
             }
@@ -57,9 +57,9 @@ public class VideoDownload extends Executor {
         while (isFirstRun || shouldRestartDownload) {
             isFirstRun = false;
             shouldRestartDownload = false;
-            System.out.println("start download");
+            updateProgressOnUiThread("开始下载");
             execute(new VideoDownloadParameters(downloadData.getSaveDir(), downloadData.getUrl()), false);
-            System.out.println("end download");
+            updateProgressOnUiThread("下载完成");
         }
 
         isDownloading.set(false);
@@ -77,12 +77,12 @@ public class VideoDownload extends Executor {
         });
     }
 
-    private void updateStatusOnUiThread() {
+    private void updateProgressOnUiThread(String progress) {
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
-                downloadData.setProgress("" + downloadedData.get() + "/" + totalData.get() + " MB");
+                downloadData.setProgress(progress);
             }
 
         });
@@ -100,15 +100,15 @@ public class VideoDownload extends Executor {
 
     private BooleanProperty isDownloading = new SimpleBooleanProperty();
 
-    private DoubleProperty downloadedData = new SimpleDoubleProperty();
+    private DoubleProperty downloadedSize = new SimpleDoubleProperty();
 
-    private DoubleProperty totalData = new SimpleDoubleProperty();
+    private DoubleProperty totalSize = new SimpleDoubleProperty();
 
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern NAME_REGEX = Pattern.compile("title:(?<name>.+)", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern MERGING_REGEX = Pattern.compile("Merging video parts", Pattern.CASE_INSENSITIVE);
+    private static final Pattern MERGING_REGEX = Pattern.compile("Merging video parts.*", Pattern.CASE_INSENSITIVE);
 
     private class ProgressChecker extends Thread {
 
@@ -136,24 +136,29 @@ public class VideoDownload extends Executor {
                     }
 
                     // if video size not get yet
-                    if (totalData.get() < 1) {
+                    if (totalSize.get() < 1) {
                         continue;
                     }
 
-                    System.out.println(lastDownloadedData + ", " + downloadedData.get() + "/" + totalData.get());
-
-                    if (lastDownloadedData > downloadedData.get()) {
-                        lastDownloadedData = downloadedData.get();
+                    // if video is merging
+                    if (totalSize.get() - downloadedSize.get() < 1) {
                         continue;
                     }
 
-                    if (downloadedData.get() - lastDownloadedData < MIN_DOWNLOAD_SIZE) {
-                        System.out.println("force cancel");
+                    System.out.println(lastDownloadedData + ", " + downloadedSize.get() + "/" + totalSize.get());
+
+                    if (lastDownloadedData > downloadedSize.get()) {
+                        lastDownloadedData = downloadedSize.get();
+                        continue;
+                    }
+
+                    if (downloadedSize.get() - lastDownloadedData < MIN_DOWNLOAD_SIZE) {
+                        updateProgressOnUiThread("重启下载中");
                         shouldRestartDownload = true;
                         forceCancel();
                     }
 
-                    lastDownloadedData = downloadedData.get();
+                    lastDownloadedData = downloadedSize.get();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

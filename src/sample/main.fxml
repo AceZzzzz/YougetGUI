@@ -37,15 +37,22 @@
     <center>
         <TableView fx:id="downloadList" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="urlColumn" text="下载链接" minWidth="80" maxWidth="80"/>
-                <TableColumn fx:id="nameColumn" text="视频名称"/>
-                <TableColumn fx:id="progressColumn" text="进度" minWidth="150" maxWidth="150"/>
-                <TableColumn fx:id="downloadDirColumn" text="下载位置" minWidth="80" maxWidth="80"/>
+                <TableColumn fx:id="videoUrlColumn" maxWidth="80" minWidth="80" text="下载链接"/>
+                <TableColumn fx:id="videoNameColumn" text="视频名称"/>
+                <TableColumn fx:id="downloadProgressColumn" maxWidth="150" minWidth="150" text="进度"/>
+                <TableColumn fx:id="downloadDirectoryColumn" maxWidth="80" minWidth="80" text="下载位置"/>
             </columns>
 
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
+            <contextMenu>
+                <ContextMenu>
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Unspecified Action"/>
+                    </items>
+                </ContextMenu>
+            </contextMenu>
         </TableView>
     </center>
 </BorderPane>
