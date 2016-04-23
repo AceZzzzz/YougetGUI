@@ -10,13 +10,13 @@ import java.io.File;
 
 public class DownloadData {
 
-    private StringProperty url = new SimpleStringProperty();
+    private final StringProperty url = new SimpleStringProperty();
 
-    private StringProperty progress = new SimpleStringProperty();
+    private final StringProperty progress = new SimpleStringProperty();
 
-    private ObjectProperty<File> saveDir = new SimpleObjectProperty<>();
+    private final ObjectProperty<File> saveDir = new SimpleObjectProperty<>();
 
-    private StringProperty name = new SimpleStringProperty();
+    private final StringProperty name = new SimpleStringProperty();
 
     public DownloadData(String url, File saveDir) {
         this.url.set(url);

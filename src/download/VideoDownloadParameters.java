@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class VideoDownloadParameters implements Parameters {
+class VideoDownloadParameters implements Parameters {
 
     private final File saveDirectory;
 

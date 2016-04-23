@@ -1,14 +1,18 @@
 package sample;
 
+import download.VideoDownload;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ui.SmartDirectoryChooser;
 import util.Looper;
 import util.Task;
-import download.VideoDownload;
+import view.VideoUrlInputDialog;
 
 import java.io.File;
 import java.net.URL;
@@ -48,7 +52,7 @@ public class Controller implements Initializable {
 
         @Override
         public void run() {
-            videoDownload.save(downloadData);
+            videoDownload.download(downloadData);
         }
 
         @Override
@@ -60,20 +64,19 @@ public class Controller implements Initializable {
 
     @FXML
     private void onAddUrl(ActionEvent event) {
-        TextInputDialog dialog = new TextInputDialog("");
-        dialog.setTitle("新建下载");
-//        dialog.getDialogPane().setContentText("What is your name?");
-        dialog.getDialogPane().setHeaderText("输入下载链接");
-        dialog.initOwner(downloadList.getScene().getWindow());
-        dialog.showAndWait().ifPresent(new Consumer<String>() {
+        VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
+        videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
+        videoUrlInputDialog.showAndWait().ifPresent(new Consumer<String>() {
 
             @Override
             public void accept(String s) {
-                DownloadData downloadData = new DownloadData(s, directoryChooser.lastDirectoryProperty().get());
-                downloadList.getItems().add(downloadData);
+                for (String split : s.split("\n")) {
+                    DownloadData downloadData = new DownloadData(s, directoryChooser.lastDirectoryProperty().get());
+                    downloadList.getItems().add(downloadData);
 
-                if (videoDownload.isDownloadingProperty().get()) {
-                    Looper.postTask(new DownloadTask(downloadData));
+                    if (videoDownload.isDownloadingProperty().get()) {
+                        Looper.postTask(new DownloadTask(downloadData));
+                    }
                 }
             }
 
@@ -90,7 +93,7 @@ public class Controller implements Initializable {
         directoryChooser.show(downloadList.getScene().getWindow());
     }
 
-    private SmartDirectoryChooser directoryChooser = new SmartDirectoryChooser();
+    private final SmartDirectoryChooser directoryChooser = new SmartDirectoryChooser();
 
     @FXML
     private Label downloadDirectoryView;
@@ -116,7 +119,7 @@ public class Controller implements Initializable {
     @FXML
     private TableColumn<DownloadData, String> downloadProgressColumn;
 
-    private VideoDownload videoDownload = new VideoDownload();
+    private final VideoDownload videoDownload = new VideoDownload();
 
     private static final Object MSG_DOWNLOAD = new Object();
 

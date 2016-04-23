@@ -20,7 +20,7 @@ public class VideoDownload extends Executor {
         new ProgressChecker().start();
     }
 
-    public void save(DownloadData downloadData) {
+    public void download(DownloadData downloadData) {
         this.downloadData = downloadData;
 
         ChangeListener<String> listener = new ChangeListener<String>() {
@@ -98,11 +98,11 @@ public class VideoDownload extends Executor {
         return isDownloading;
     }
 
-    private BooleanProperty isDownloading = new SimpleBooleanProperty();
+    private final BooleanProperty isDownloading = new SimpleBooleanProperty();
 
-    private DoubleProperty downloadedSize = new SimpleDoubleProperty();
+    private final DoubleProperty downloadedSize = new SimpleDoubleProperty();
 
-    private DoubleProperty totalSize = new SimpleDoubleProperty();
+    private final DoubleProperty totalSize = new SimpleDoubleProperty();
 
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
 
@@ -116,14 +116,14 @@ public class VideoDownload extends Executor {
             setDaemon(true);
         }
 
-        private final long CHECK_INTERVAL = 10;
+        private final long CHECK_INTERVAL = 30;
 
         // MB/s
         private final double MIN_DOWNLOAD_SPEED = 0.1;
 
         private final double MIN_DOWNLOAD_SIZE = CHECK_INTERVAL * MIN_DOWNLOAD_SPEED;
 
-        private double lastDownloadedData;
+        private double lastDownloadedSize;
 
         @Override
         public void run() {
@@ -135,7 +135,7 @@ public class VideoDownload extends Executor {
                         continue;
                     }
 
-                    // if video size not get yet
+                    // if download not start yet
                     if (totalSize.get() < 1) {
                         continue;
                     }
@@ -145,20 +145,20 @@ public class VideoDownload extends Executor {
                         continue;
                     }
 
-                    System.out.println(lastDownloadedData + ", " + downloadedSize.get() + "/" + totalSize.get());
-
-                    if (lastDownloadedData > downloadedSize.get()) {
-                        lastDownloadedData = downloadedSize.get();
+                    // if something is wrong, EX: download restart
+                    if (lastDownloadedSize > downloadedSize.get()) {
+                        lastDownloadedSize = downloadedSize.get();
                         continue;
                     }
 
-                    if (downloadedSize.get() - lastDownloadedData < MIN_DOWNLOAD_SIZE) {
+                    if (downloadedSize.get() - lastDownloadedSize < MIN_DOWNLOAD_SIZE) {
                         updateProgressOnUiThread("重启下载中");
+                        System.out.println("restart download");
                         shouldRestartDownload = true;
                         forceCancel();
                     }
 
-                    lastDownloadedData = downloadedSize.get();
+                    lastDownloadedSize = downloadedSize.get();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
