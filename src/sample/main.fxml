@@ -39,8 +39,8 @@
             <columns>
                 <TableColumn fx:id="urlColumn" text="下载链接"/>
                 <TableColumn fx:id="nameColumn" text="视频名称"/>
-                <TableColumn fx:id="downloadDirColumn" text="下载位置"/>
-                <TableColumn fx:id="statusColumn" text="下载状态"/>
+                <TableColumn fx:id="progressColumn" text="进度" minWidth="150" maxWidth="150"/>
+                <TableColumn fx:id="downloadDirColumn" text="下载位置" minWidth="80" maxWidth="80"/>
             </columns>
 
             <columnResizePolicy>

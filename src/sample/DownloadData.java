@@ -12,7 +12,7 @@ public class DownloadData {
 
     private StringProperty url = new SimpleStringProperty();
 
-    private StringProperty status = new SimpleStringProperty();
+    private StringProperty progress = new SimpleStringProperty();
 
     private ObjectProperty<File> saveDir = new SimpleObjectProperty<>();
 
@@ -23,8 +23,8 @@ public class DownloadData {
         this.saveDir.set(saveDir);
     }
 
-    public void setStatus(String status) {
-        this.status.set(status);
+    public void setProgress(String progress) {
+        this.progress.set(progress);
     }
 
     public void setName(String name) {
@@ -55,12 +55,12 @@ public class DownloadData {
         return url;
     }
 
-    public String getStatus() {
-        return status.get();
+    public String getProgress() {
+        return progress.get();
     }
 
-    public StringProperty statusProperty() {
-        return status;
+    public StringProperty progressProperty() {
+        return progress;
     }
 
 }

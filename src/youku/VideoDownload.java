@@ -75,7 +75,7 @@ public class VideoDownload extends Executor {
 
             @Override
             public void run() {
-                downloadData.setStatus("" + downloadedData.get() + "/" + totalData.get() + " MB");
+                downloadData.setProgress("" + downloadedData.get() + "/" + totalData.get() + " MB");
             }
 
         });
@@ -107,7 +107,7 @@ public class VideoDownload extends Executor {
             setDaemon(true);
         }
 
-        private final long CHECK_INTERVAL = 30;
+        private final long CHECK_INTERVAL = 10;
 
         // MB/s
         private final double MIN_DOWNLOAD_SPEED = 0.1;
@@ -126,9 +126,14 @@ public class VideoDownload extends Executor {
                         continue;
                     }
 
-                    System.out.println("download: " + (downloadedData.get() - lastDownloadedData) + " MB");
+                    // if video size not get yet
+                    if (totalData.get() < 1) {
+                        continue;
+                    }
 
-                    if (lastDownloadedData < downloadedData.get()) {
+                    System.out.println(downloadedData.get() + "," + lastDownloadedData + "," + totalData.get());
+
+                    if (lastDownloadedData > downloadedData.get()) {
                         lastDownloadedData = downloadedData.get();
                         continue;
                     }
@@ -138,6 +143,8 @@ public class VideoDownload extends Executor {
                         shouldRestartDownload = true;
                         forceCancel();
                     }
+
+                    lastDownloadedData = downloadedData.get();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

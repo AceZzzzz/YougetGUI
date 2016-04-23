@@ -20,7 +20,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         urlColumn.setCellValueFactory(new PropertyValueFactory<>("url"));
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        progressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
         downloadDirColumn.setCellValueFactory(new PropertyValueFactory<>("saveDir"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         startDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty());
@@ -100,7 +100,7 @@ public class Controller implements Initializable {
     private TableColumn<DownloadData, String> urlColumn;
 
     @FXML
-    private TableColumn<DownloadData, String> statusColumn;
+    private TableColumn<DownloadData, String> progressColumn;
 
     private VideoDownload videoDownload = new VideoDownload();
 
