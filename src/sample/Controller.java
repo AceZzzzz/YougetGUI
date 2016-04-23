@@ -72,7 +72,7 @@ public class Controller implements Initializable {
             @Override
             public void accept(String s) {
                 for (String split : s.split("\n")) {
-                    DownloadData downloadData = new DownloadData(s, directoryChooser.lastDirectoryProperty().get());
+                    DownloadData downloadData = new DownloadData(split, directoryChooser.lastDirectoryProperty().get());
                     downloadList.getItems().add(downloadData);
 
                     if (videoDownload.isDownloadingProperty().get()) {
