@@ -70,10 +70,15 @@ public class Controller implements Initializable {
                 for (String split : s.split("\n")) {
                     DownloadData downloadData = new DownloadData(split, directoryChooser.lastDirectoryProperty().get());
                     downloadList.getItems().add(downloadData);
-
                     Looper.postTask(new UpdateVideoInfoTask(downloadData));
+                }
 
-                    if (videoDownload.isDownloadingProperty().get()) {
+                for (DownloadData downloadData : downloadList.getItems()) {
+                    Looper.postTask(new UpdateVideoInfoTask(downloadData));
+                }
+
+                if (videoDownload.isDownloadingProperty().get()) {
+                    for (DownloadData downloadData : downloadList.getItems()) {
                         Looper.postTask(new DownloadTask(downloadData));
                     }
                 }
