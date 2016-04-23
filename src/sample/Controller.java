@@ -11,7 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import ui.SmartDirectoryChooser;
 import util.Looper;
 import util.Task;
-import youku.VideoSave;
+import youku.VideoDownload;
 
 import java.io.File;
 import java.net.URL;
@@ -26,8 +26,8 @@ public class Controller implements Initializable {
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         downloadDirColumn.setCellValueFactory(new PropertyValueFactory<>("saveDir"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        startDownloadView.disableProperty().bind(videoDownload.isDownloadProperty());
-        stopDownloadView.disableProperty().bind(videoDownload.isDownloadProperty().not());
+        startDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty());
+        stopDownloadView.disableProperty().bind(videoDownload.isDownloadingProperty().not());
     }
 
     @FXML
@@ -100,7 +100,7 @@ public class Controller implements Initializable {
     @FXML
     private TableColumn<DownloadData, String> statusColumn;
 
-    private VideoSave videoDownload = new VideoSave();
+    private VideoDownload videoDownload = new VideoDownload();
 
     private static final Object MSG_DOWNLOAD = new Object();
 

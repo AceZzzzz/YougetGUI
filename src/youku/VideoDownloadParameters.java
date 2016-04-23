@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class VideoSaveParameters implements Parameters {
+public class VideoDownloadParameters implements Parameters {
 
     private final File saveDirectory;
 
     private final String url;
 
-    public VideoSaveParameters(File saveDirectory, String url) {
+    public VideoDownloadParameters(File saveDirectory, String url) {
         this.saveDirectory = saveDirectory;
         this.url = url;
     }

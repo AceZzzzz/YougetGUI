@@ -13,10 +13,10 @@ import sample.DownloadData;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VideoSave extends Executor {
+public class VideoDownload extends Executor {
 
-    public VideoSave() {
-        super(VideoSave.class, "you-get-0.4.365-win32.exe");
+    public VideoDownload() {
+        super(VideoDownload.class, "you-get-0.4.365-win32.exe");
         new ProgressChecker().start();
     }
 
@@ -37,24 +37,25 @@ public class VideoSave extends Executor {
                 for (String split : newValue.split(" ")) {
                     Matcher matcher = PROGRESS_REGEX.matcher(split);
                     if (matcher.matches()) {
-                        downloaded.set(Double.parseDouble(matcher.group("downloaded")));
-                        total.set(Double.parseDouble(matcher.group("total")));
+                        downloadedData.set(Double.parseDouble(matcher.group("downloaded")));
+                        totalData.set(Double.parseDouble(matcher.group("total")));
                         updateStatusOnUiThread();
                     }
                 }
             }
         };
         statusProperty().addListener(listener);
-        isDownload.set(true);
+        isDownloading.set(true);
 
-        while (isFirstRun || isForceCancel) {
+        while (isFirstRun || shouldRestartDownload) {
             isFirstRun = false;
-            isForceCancel = false;
+            shouldRestartDownload = false;
             System.out.println("start download");
-            execute(new VideoSaveParameters(downloadData.getSaveDir(), downloadData.getUrl()), false);
+            execute(new VideoDownloadParameters(downloadData.getSaveDir(), downloadData.getUrl()), false);
+            System.out.println("end download");
         }
 
-        isDownload.set(false);
+        isDownloading.set(false);
         statusProperty().removeListener(listener);
     }
 
@@ -74,7 +75,7 @@ public class VideoSave extends Executor {
 
             @Override
             public void run() {
-                downloadData.setStatus("" + downloaded.get() + "/" + total.get() + " MB");
+                downloadData.setStatus("" + downloadedData.get() + "/" + totalData.get() + " MB");
             }
 
         });
@@ -84,17 +85,17 @@ public class VideoSave extends Executor {
 
     private boolean isFirstRun = true;
 
-    private boolean isForceCancel = false;
+    private boolean shouldRestartDownload = false;
 
-    public BooleanProperty isDownloadProperty() {
-        return isDownload;
+    public BooleanProperty isDownloadingProperty() {
+        return isDownloading;
     }
 
-    private BooleanProperty isDownload = new SimpleBooleanProperty();
+    private BooleanProperty isDownloading = new SimpleBooleanProperty();
 
-    private DoubleProperty downloaded = new SimpleDoubleProperty();
+    private DoubleProperty downloadedData = new SimpleDoubleProperty();
 
-    private DoubleProperty total = new SimpleDoubleProperty();
+    private DoubleProperty totalData = new SimpleDoubleProperty();
 
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
 
@@ -113,27 +114,28 @@ public class VideoSave extends Executor {
 
         private final double MIN_DOWNLOAD_SIZE = CHECK_INTERVAL * MIN_DOWNLOAD_SPEED;
 
-        private double lastDownloaded;
+        private double lastDownloadedData;
 
         @Override
         public void run() {
             try {
                 while (true) {
                     Thread.sleep(CHECK_INTERVAL * 1000);
-                    if (!isDownload.get()) {
+
+                    if (!isDownloading.get()) {
                         continue;
                     }
 
-                    System.out.println(lastDownloaded + "," + downloaded);
+                    System.out.println("download: " + (downloadedData.get() - lastDownloadedData) + " MB");
 
-                    if (lastDownloaded < downloaded.get()) {
-                        lastDownloaded = downloaded.get();
+                    if (lastDownloadedData < downloadedData.get()) {
+                        lastDownloadedData = downloadedData.get();
                         continue;
                     }
 
-                    if (downloaded.get() - lastDownloaded < MIN_DOWNLOAD_SIZE) {
+                    if (downloadedData.get() - lastDownloadedData < MIN_DOWNLOAD_SIZE) {
                         System.out.println("force cancel");
-                        isForceCancel = true;
+                        shouldRestartDownload = true;
                         forceCancel();
                     }
                 }
