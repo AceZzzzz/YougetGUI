@@ -95,7 +95,7 @@ public class Controller implements Initializable {
 
     @FXML
     private void onStopDownloadClick(ActionEvent event) {
-        videoDownload.forceCancel();
+        Looper.removeTask(MSG_DOWNLOAD);
     }
 
     @FXML
