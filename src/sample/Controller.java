@@ -104,6 +104,10 @@ public class Controller implements Initializable {
 
     @FXML
     private void onOpenDownloadDirectoryClick(ActionEvent event) {
+        if (downloadList.getSelectionModel().isEmpty()) {
+            return;
+        }
+
         try {
             java.awt.Desktop.getDesktop().open(downloadList.getSelectionModel().getSelectedItem().getDownloadDir());
         } catch (IOException e) {
