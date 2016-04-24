@@ -10,6 +10,8 @@ import java.io.File;
 
 public class DownloadData {
 
+    private final StringProperty videoProfile = new SimpleStringProperty();
+
     private final StringProperty url = new SimpleStringProperty();
 
     private final StringProperty progress = new SimpleStringProperty("等待下载...");
@@ -21,6 +23,22 @@ public class DownloadData {
     public DownloadData(String url, File downloadDirectory) {
         this.url.set(url);
         this.downloadDirectory.set(downloadDirectory);
+    }
+
+    public String getVideoProfile() {
+        return videoProfile.get();
+    }
+
+    public void setVideoProfile(String videoProfile) {
+        this.videoProfile.set(videoProfile);
+    }
+
+    public StringProperty videoProfileProperty() {
+        return videoProfile;
+    }
+
+    public File getDownloadDirectory() {
+        return downloadDirectory.get();
     }
 
     public void setProgress(String progress) {

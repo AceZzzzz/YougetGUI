@@ -23,7 +23,7 @@ public class VideoDownload extends Executor {
 
     public void updateVideoInfo(DownloadData downloadData) {
         this.downloadData = downloadData;
-        boolean[] findName = new boolean[]{false};
+        boolean[] findTitle = new boolean[]{false};
         ChangeListener<String> listener = new ChangeListener<String>() {
 
             @Override
@@ -32,22 +32,27 @@ public class VideoDownload extends Executor {
                     System.out.println(newValue);
                 }
 
-                if (findName[0]) {
-                    return;
+                // just get first title
+                if (!findTitle[0]) {
+                    Matcher matcher = TITLE_REGEX.matcher(newValue);
+                    if (matcher.matches()) {
+                        findTitle[0] = true;
+                        updateNameOnUiThread(matcher.group("title").trim());
+                    }
                 }
 
                 {
-                    Matcher matcher = TITLE_REGEX.matcher(newValue);
+                    Matcher matcher = VIDEO_PROFILE_REGEX.matcher(newValue);
                     if (matcher.matches()) {
-                        findName[0] = true;
-                        updateNameOnUiThread(matcher.group("name").trim());
+                        updateVideoProfileOnUiThread(matcher.group("videoprofile").trim());
                     }
                 }
+
             }
         };
         statusProperty().addListener(listener);
         execute(new VideoInfoParameters(downloadData.getUrl()), false);
-        if (!findName[0]) {
+        if (!findTitle[0]) {
             updateNameOnUiThread("错误的视频网址");
         }
         statusProperty().removeListener(listener);
@@ -67,7 +72,7 @@ public class VideoDownload extends Executor {
                 {
                     Matcher matcher = TITLE_REGEX.matcher(newValue);
                     if (matcher.matches()) {
-                        updateNameOnUiThread(matcher.group("name").trim());
+                        updateNameOnUiThread(matcher.group("title").trim());
                     }
                 }
 
@@ -108,6 +113,17 @@ public class VideoDownload extends Executor {
         });
     }
 
+    private void updateVideoProfileOnUiThread(String videoPeofile) {
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                downloadData.setVideoProfile(videoPeofile);
+            }
+
+        });
+    }
+
     private void updateProgressOnUiThread(String progress) {
         Platform.runLater(new Runnable() {
 
@@ -129,9 +145,11 @@ public class VideoDownload extends Executor {
 
     private final DoubleProperty totalSize = new SimpleDoubleProperty();
 
+    private static final Pattern VIDEO_PROFILE_REGEX = Pattern.compile(".+video-profile:(?<videoprofile>.+)", Pattern.CASE_INSENSITIVE);
+
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern TITLE_REGEX = Pattern.compile(".*((title)|(playlist)):(?<name>.+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TITLE_REGEX = Pattern.compile(".*((title)|(playlist)):(?<title>.+)", Pattern.CASE_INSENSITIVE);
 
     private class ProgressChecker extends Thread {
 
@@ -139,7 +157,7 @@ public class VideoDownload extends Executor {
             setDaemon(true);
         }
 
-        private final long CHECK_INTERVAL = 60;
+        private final long CHECK_INTERVAL = 20;
 
         // MB/s
         private final double MIN_DOWNLOAD_SPEED = 0.05;

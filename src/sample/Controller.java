@@ -21,6 +21,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        videoProfileColumn.setCellValueFactory(new PropertyValueFactory<>("videoProfile"));
         downloadProgressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
         downloadDirectoryColumn.setCellValueFactory(new PropertyValueFactory<>("downloadDirectory"));
         videoNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -118,6 +119,9 @@ public class Controller implements Initializable {
 
     @FXML
     private TableColumn<DownloadData, String> videoNameColumn;
+
+    @FXML
+    private TableColumn<DownloadData, String> videoProfileColumn;
 
     @FXML
     private TableColumn<DownloadData, File> downloadDirectoryColumn;
