@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ui.SmartDirectoryChooser;
 import util.Looper;
@@ -22,7 +23,9 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         videoProfileColumn.setCellValueFactory(new PropertyValueFactory<>("videoProfile"));
+        downloadStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         downloadProgressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
+        downloadProgressColumn.setCellFactory(ProgressBarTableCell.forTableColumn());
         downloadDirectoryColumn.setCellValueFactory(new PropertyValueFactory<>("downloadDirectory"));
         videoNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         downloadDirectoryView.textProperty().bind(directoryChooser.lastDirectoryProperty().asString());
@@ -130,7 +133,10 @@ public class Controller implements Initializable {
     private TableView<DownloadData> downloadList;
 
     @FXML
-    private TableColumn<DownloadData, String> downloadProgressColumn;
+    private TableColumn<DownloadData, String> downloadStatusColumn;
+
+    @FXML
+    private TableColumn<DownloadData, Double> downloadProgressColumn;
 
     private final VideoDownload videoDownload = new VideoDownload();
 

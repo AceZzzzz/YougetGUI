@@ -3,11 +3,10 @@ package download;
 import debug.Debug;
 import executor.Executor;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableDoubleValue;
+import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import sample.DownloadData;
 
@@ -22,7 +21,8 @@ public class VideoDownload extends Executor {
     }
 
     public void updateVideoInfo(DownloadData downloadData) {
-        this.downloadData = downloadData;
+        updateDownloadData(downloadData);
+
         boolean[] findTitle = new boolean[]{false};
         ChangeListener<String> listener = new ChangeListener<String>() {
 
@@ -37,7 +37,7 @@ public class VideoDownload extends Executor {
                     Matcher matcher = TITLE_REGEX.matcher(newValue);
                     if (matcher.matches()) {
                         findTitle[0] = true;
-                        updateNameOnUiThread(matcher.group("title").trim());
+                        updateTitleOnUiThread(matcher.group("title").trim());
                     }
                 }
 
@@ -53,13 +53,48 @@ public class VideoDownload extends Executor {
         statusProperty().addListener(listener);
         execute(new VideoInfoParameters(downloadData.getUrl()), false);
         if (!findTitle[0]) {
-            updateNameOnUiThread("错误的视频网址");
+            updateTitleOnUiThread("错误的视频网址");
         }
         statusProperty().removeListener(listener);
     }
 
-    public void download(DownloadData downloadData) {
+    private void updateVideoProfileOnUiThread(String profile) {
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                videoProfile.set(profile);
+            }
+        });
+    }
+
+    private void updateTitleOnUiThread(String title) {
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                videoTitle.set(title);
+            }
+        });
+    }
+
+    private void updateDownloadData(DownloadData downloadData) {
+        if (this.downloadData != null) {
+            this.downloadData.progressProperty().unbind();
+            this.downloadData.statusProperty().unbind();
+            this.downloadData.nameProperty().unbind();
+            this.downloadData.videoProfileProperty().unbind();
+        }
+
         this.downloadData = downloadData;
+        this.downloadData.progressProperty().bind(progress);
+        this.downloadData.statusProperty().bind(progressStatus);
+        this.downloadData.nameProperty().bind(videoTitle);
+        this.downloadData.videoProfileProperty().bind(videoProfile);
+    }
+
+    public void download(DownloadData downloadData) {
+        updateDownloadData(downloadData);
 
         ChangeListener<String> listener = new ChangeListener<String>() {
 
@@ -72,16 +107,14 @@ public class VideoDownload extends Executor {
                 {
                     Matcher matcher = TITLE_REGEX.matcher(newValue);
                     if (matcher.matches()) {
-                        updateNameOnUiThread(matcher.group("title").trim());
+                        updateTitleOnUiThread(matcher.group("title").trim());
                     }
                 }
 
                 for (String split : newValue.split(" ")) {
                     Matcher matcher = PROGRESS_REGEX.matcher(split);
                     if (matcher.matches()) {
-                        downloadedSize.set(Double.parseDouble(matcher.group("downloaded")));
-                        totalSize.set(Double.parseDouble(matcher.group("total")));
-                        updateProgressOnUiThread("" + downloadedSize.get() + "/" + totalSize.get() + " MB");
+                        updateProgressOnUiThread(Double.parseDouble(matcher.group("downloaded")), Double.parseDouble(matcher.group("total")));
                     }
                 }
             }
@@ -95,46 +128,22 @@ public class VideoDownload extends Executor {
             shouldRestartDownload = false;
 
             // reset download status
-            totalSize.set(0);
-            downloadedSize.set(0);
+            updateProgressOnUiThread(0, 0);
 
-            updateProgressOnUiThread("开始下载");
             execute(new VideoDownloadParameters(downloadData.getDownloadDir(), downloadData.getUrl()), false);
-            updateProgressOnUiThread("下载完成");
         }
 
         isDownloading.set(false);
         statusProperty().removeListener(listener);
     }
 
-    private void updateNameOnUiThread(String name) {
+    private void updateProgressOnUiThread(double downloadedSize, double totalSize) {
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
-                downloadData.setName(name);
-            }
-
-        });
-    }
-
-    private void updateVideoProfileOnUiThread(String videoPeofile) {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                downloadData.setVideoProfile(videoPeofile);
-            }
-
-        });
-    }
-
-    private void updateProgressOnUiThread(String progress) {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                downloadData.setProgress(progress);
+                VideoDownload.this.downloadedSize.set(downloadedSize);
+                VideoDownload.this.totalSize.set(totalSize);
             }
 
         });
@@ -149,6 +158,14 @@ public class VideoDownload extends Executor {
     private final DoubleProperty downloadedSize = new SimpleDoubleProperty();
 
     private final DoubleProperty totalSize = new SimpleDoubleProperty();
+
+    private final StringProperty videoProfile = new SimpleStringProperty();
+
+    private final StringProperty videoTitle = new SimpleStringProperty();
+
+    private final ObservableDoubleValue progress = downloadedSize.divide(totalSize);
+
+    private final ObservableStringValue progressStatus = downloadedSize.asString().concat("/").concat(totalSize.asString()).concat(" MB");
 
     private static final Pattern VIDEO_PROFILE_REGEX = Pattern.compile(".+video-profile:(?<videoprofile>.+)", Pattern.CASE_INSENSITIVE);
 
@@ -202,7 +219,6 @@ public class VideoDownload extends Executor {
                     }
 
                     if (downloadedSize.get() - lastDownloadedSize < MIN_DOWNLOAD_SIZE) {
-                        updateProgressOnUiThread("重启下载中");
                         System.out.println("restart download");
                         shouldRestartDownload = true;
                         forceCancel();

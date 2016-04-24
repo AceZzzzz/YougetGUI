@@ -1,9 +1,6 @@
 package sample;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 import java.io.File;
 
@@ -14,11 +11,13 @@ public class DownloadData {
 
     private final StringProperty url = new SimpleStringProperty();
 
-    private final StringProperty progress = new SimpleStringProperty("等待下载...");
+    private final StringProperty status = new SimpleStringProperty();
+
+    private final DoubleProperty progress = new SimpleDoubleProperty();
 
     private final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
 
-    private final StringProperty name = new SimpleStringProperty("等待加载...");
+    private final StringProperty name = new SimpleStringProperty();
 
     public DownloadData(String url, File downloadDirectory) {
         this.url.set(url);
@@ -27,6 +26,18 @@ public class DownloadData {
 
     public String getVideoProfile() {
         return videoProfile.get();
+    }
+
+    public double getProgress() {
+        return progress.get();
+    }
+
+    public DoubleProperty progressProperty() {
+        return progress;
+    }
+
+    public void setProgress(double progress) {
+        this.progress.set(progress);
     }
 
     public void setVideoProfile(String videoProfile) {
@@ -41,8 +52,8 @@ public class DownloadData {
         return downloadDirectory.get();
     }
 
-    public void setProgress(String progress) {
-        this.progress.set(progress);
+    public void setStatus(String status) {
+        this.status.set(status);
     }
 
     public void setName(String name) {
@@ -73,12 +84,12 @@ public class DownloadData {
         return url;
     }
 
-    public String getProgress() {
-        return progress.get();
+    public String getStatus() {
+        return status.get();
     }
 
-    public StringProperty progressProperty() {
-        return progress;
+    public StringProperty statusProperty() {
+        return status;
     }
 
 }
