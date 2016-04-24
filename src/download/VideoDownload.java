@@ -139,10 +139,10 @@ public class VideoDownload extends Executor {
             setDaemon(true);
         }
 
-        private final long CHECK_INTERVAL = 30;
+        private final long CHECK_INTERVAL = 60;
 
         // MB/s
-        private final double MIN_DOWNLOAD_SPEED = 0.1;
+        private final double MIN_DOWNLOAD_SPEED = 0.05;
 
         private final double MIN_DOWNLOAD_SIZE = CHECK_INTERVAL * MIN_DOWNLOAD_SPEED;
 
@@ -156,6 +156,10 @@ public class VideoDownload extends Executor {
 
                     if (!isDownloading.get()) {
                         continue;
+                    }
+
+                    if (Debug.LOG) {
+                        System.out.println("check: " + lastDownloadedSize + " " + downloadedSize.get() + "/" + totalSize.get());
                     }
 
                     // if download not start yet
