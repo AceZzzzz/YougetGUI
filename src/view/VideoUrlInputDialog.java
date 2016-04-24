@@ -27,7 +27,7 @@ public class VideoUrlInputDialog extends Dialog<String> {
         });
     }
 
-    private TextArea textArea = new TextArea();
+    private final TextArea textArea = new TextArea();
 
     {
         textArea.setPrefColumnCount(40);

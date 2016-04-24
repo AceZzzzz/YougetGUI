@@ -50,7 +50,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void onAddUrl(ActionEvent event) {
+    private void onAddUrlClick(ActionEvent event) {
         VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
         videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
         videoUrlInputDialog.showAndWait().ifPresent(new Consumer<String>() {
@@ -99,7 +99,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void onOpenSaveDirectory(ActionEvent event) {
+    private void onOpenDownloadDirectoryClick(ActionEvent event) {
         try {
             java.awt.Desktop.getDesktop().open(downloadList.getSelectionModel().getSelectedItem().getDownloadDir());
         } catch (IOException e) {

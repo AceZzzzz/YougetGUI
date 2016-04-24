@@ -93,6 +93,11 @@ public class VideoDownload extends Executor {
         while (isFirstRun || shouldRestartDownload) {
             isFirstRun = false;
             shouldRestartDownload = false;
+
+            // reset download status
+            totalSize.set(0);
+            downloadedSize.set(0);
+
             updateProgressOnUiThread("开始下载");
             execute(new VideoDownloadParameters(downloadData.getDownloadDir(), downloadData.getUrl()), false);
             updateProgressOnUiThread("下载完成");
