@@ -27,7 +27,9 @@ public class Controller implements Initializable {
         downloadProgressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
         downloadProgressColumn.setCellFactory(ProgressBarTableCell.forTableColumn());
         downloadDirectoryColumn.setCellValueFactory(new PropertyValueFactory<>("downloadDirectory"));
-        videoNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        downloadSpeedColumn.setCellValueFactory(new PropertyValueFactory<>("speed"));
+        videoTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+
         downloadDirectoryView.textProperty().bind(directoryChooser.lastDirectoryProperty().asString());
     }
 
@@ -61,11 +63,10 @@ public class Controller implements Initializable {
             @Override
             public void accept(String s) {
                 for (String split : s.split("\n")) {
-                    DownloadData downloadData = new DownloadData(split, directoryChooser.lastDirectoryProperty().get());
+                    DownloadData downloadData = new DownloadData(split.trim(), directoryChooser.lastDirectoryProperty().get());
                     downloadList.getItems().add(downloadData);
                 }
 
-                // something wrong with get video info
                 for (DownloadData downloadData : downloadList.getItems()) {
                     Looper.postTask(new UpdateVideoInfoTask(downloadData));
                 }
@@ -121,7 +122,7 @@ public class Controller implements Initializable {
     private Label downloadDirectoryView;
 
     @FXML
-    private TableColumn<DownloadData, String> videoNameColumn;
+    private TableColumn<DownloadData, String> videoTitleColumn;
 
     @FXML
     private TableColumn<DownloadData, String> videoProfileColumn;
@@ -137,6 +138,9 @@ public class Controller implements Initializable {
 
     @FXML
     private TableColumn<DownloadData, Double> downloadProgressColumn;
+
+    @FXML
+    private TableColumn<DownloadData, String> downloadSpeedColumn;
 
     private final VideoDownload videoDownload = new VideoDownload();
 

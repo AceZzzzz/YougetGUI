@@ -17,7 +17,17 @@ public class DownloadData {
 
     private final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
 
-    private final StringProperty name = new SimpleStringProperty();
+    private final StringProperty title = new SimpleStringProperty();
+
+    private final StringProperty speed = new SimpleStringProperty();
+
+    public String getSpeed() {
+        return speed.get();
+    }
+
+    public StringProperty speedProperty() {
+        return speed;
+    }
 
     public DownloadData(String url, File downloadDirectory) {
         this.url.set(url);
@@ -56,16 +66,16 @@ public class DownloadData {
         this.status.set(status);
     }
 
-    public void setName(String name) {
-        this.name.set(name);
+    public void setTitle(String title) {
+        this.title.set(title);
     }
 
-    public String getName() {
-        return name.get();
+    public String getTitle() {
+        return title.get();
     }
 
-    public StringProperty nameProperty() {
-        return name;
+    public StringProperty titleProperty() {
+        return title;
     }
 
     public File getDownloadDir() {

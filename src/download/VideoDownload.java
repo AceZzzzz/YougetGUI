@@ -65,6 +65,7 @@ public class VideoDownload extends Executor {
             public void run() {
                 videoProfile.set(profile);
             }
+
         });
     }
 
@@ -75,6 +76,7 @@ public class VideoDownload extends Executor {
             public void run() {
                 videoTitle.set(title);
             }
+
         });
     }
 
@@ -82,15 +84,33 @@ public class VideoDownload extends Executor {
         if (this.downloadData != null) {
             this.downloadData.progressProperty().unbind();
             this.downloadData.statusProperty().unbind();
-            this.downloadData.nameProperty().unbind();
+            this.downloadData.titleProperty().unbind();
             this.downloadData.videoProfileProperty().unbind();
+            this.downloadData.speedProperty().unbind();
         }
+
+        updateTitleOnUiThread("");
+        updateVideoProfileOnUiThread("");
+        updateProgressOnUiThread(0, 0);
+        updateSpeedOnUiThread("");
 
         this.downloadData = downloadData;
         this.downloadData.progressProperty().bind(progress);
         this.downloadData.statusProperty().bind(progressStatus);
-        this.downloadData.nameProperty().bind(videoTitle);
+        this.downloadData.titleProperty().bind(videoTitle);
         this.downloadData.videoProfileProperty().bind(videoProfile);
+        this.downloadData.speedProperty().bind(speed);
+    }
+
+    private void updateSpeedOnUiThread(String speed) {
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                VideoDownload.this.speed.set(speed);
+            }
+
+        });
     }
 
     public void download(DownloadData downloadData) {
@@ -115,6 +135,13 @@ public class VideoDownload extends Executor {
                     Matcher matcher = PROGRESS_REGEX.matcher(split);
                     if (matcher.matches()) {
                         updateProgressOnUiThread(Double.parseDouble(matcher.group("downloaded")), Double.parseDouble(matcher.group("total")));
+                    }
+                }
+
+                {
+                    Matcher matcher = SPEED_REGEX.matcher(newValue);
+                    if (matcher.matches()) {
+                        updateSpeedOnUiThread(matcher.group("speed"));
                     }
                 }
             }
@@ -172,6 +199,10 @@ public class VideoDownload extends Executor {
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern TITLE_REGEX = Pattern.compile(".*((title)|(playlist)):(?<title>.+)", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern SPEED_REGEX = Pattern.compile(".+ (?<speed>\\d+ ((kB)|(MB))/s)$", Pattern.CASE_INSENSITIVE);
+
+    private final StringProperty speed = new SimpleStringProperty();
 
     private class ProgressChecker extends Thread {
 
