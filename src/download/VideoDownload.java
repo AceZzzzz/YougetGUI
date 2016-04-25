@@ -63,7 +63,7 @@ public class VideoDownload extends Executor {
 
             @Override
             public void run() {
-                System.out.println("profile:" +profile);
+                System.out.println("profile:" + profile);
                 videoProfile.set(profile);
             }
 
@@ -90,8 +90,8 @@ public class VideoDownload extends Executor {
             this.downloadData.speedProperty().unbind();
         }
 
-        updateTitleOnUiThread("");
-        updateVideoProfileOnUiThread("");
+        updateTitleOnUiThread(downloadData.getTitle());
+        updateVideoProfileOnUiThread(downloadData.getVideoProfile());
         updateProgressOnUiThread(0, 0);
         updateSpeedOnUiThread("");
 
