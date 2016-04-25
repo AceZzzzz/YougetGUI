@@ -63,6 +63,7 @@ public class VideoDownload extends Executor {
 
             @Override
             public void run() {
+                System.out.println("profile:" +profile);
                 videoProfile.set(profile);
             }
 
@@ -128,6 +129,13 @@ public class VideoDownload extends Executor {
                     Matcher matcher = TITLE_REGEX.matcher(newValue);
                     if (matcher.matches()) {
                         updateTitleOnUiThread(matcher.group("title").trim());
+                    }
+                }
+
+                {
+                    Matcher matcher = VIDEO_PROFILE_REGEX.matcher(newValue);
+                    if (matcher.matches()) {
+                        updateVideoProfileOnUiThread(matcher.group("videoprofile").trim());
                     }
                 }
 
