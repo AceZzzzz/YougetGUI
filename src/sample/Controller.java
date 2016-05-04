@@ -63,6 +63,10 @@ public class Controller implements Initializable {
             @Override
             public void accept(String s) {
                 for (String split : s.split("\n")) {
+                    if (split.trim().isEmpty()) {
+                        continue;
+                    }
+
                     DownloadData downloadData = new DownloadData(split.trim(), directoryChooser.lastDirectoryProperty().get());
                     downloadList.getItems().add(downloadData);
                 }
