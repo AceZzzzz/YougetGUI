@@ -35,12 +35,12 @@
     <center>
         <TableView fx:id="downloadList" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="videoProfileColumn" maxWidth="50" minWidth="50" text="清晰度"/>
-                <TableColumn fx:id="videoTitleColumn" text="视频名称"/>
-                <TableColumn fx:id="downloadProgressColumn" maxWidth="80" minWidth="80" text="进度"/>
-                <TableColumn fx:id="downloadStatusColumn" maxWidth="120" minWidth="120" text="状态"/>
-                <TableColumn fx:id="downloadSpeedColumn" maxWidth="80" minWidth="80" text="速度"/>
-                <TableColumn fx:id="downloadDirectoryColumn" maxWidth="80" minWidth="80" text="下载位置"/>
+                <TableColumn fx:id="videoProfileColumn" maxWidth="50" minWidth="50" text="清晰度" sortable="false"/>
+                <TableColumn fx:id="videoTitleColumn" text="视频名称" sortable="false"/>
+                <TableColumn fx:id="downloadProgressColumn" maxWidth="80" minWidth="80" text="进度" sortable="false"/>
+                <TableColumn fx:id="downloadStatusColumn" maxWidth="120" minWidth="120" text="状态" sortable="false"/>
+                <TableColumn fx:id="downloadSpeedColumn" maxWidth="80" minWidth="80" text="速度" sortable="false"/>
+                <TableColumn fx:id="downloadDirectoryColumn" maxWidth="80" minWidth="80" text="下载位置" sortable="false"/>
             </columns>
 
             <columnResizePolicy>
@@ -51,6 +51,7 @@
                 <ContextMenu>
                     <items>
                         <MenuItem mnemonicParsing="false" text="打开所在目录" onAction="#onOpenDownloadDirectoryClick"/>
+                        <MenuItem mnemonicParsing="false" text="清空" onAction="#onClearClick"/>
                     </items>
                 </ContextMenu>
             </contextMenu>

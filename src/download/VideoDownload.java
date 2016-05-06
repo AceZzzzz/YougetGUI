@@ -28,10 +28,6 @@ public class VideoDownload extends Executor {
 
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (Debug.LOG) {
-                    System.out.println(newValue);
-                }
-
                 // just get first title
                 if (!findTitle[0]) {
                     Matcher matcher = TITLE_REGEX.matcher(newValue);
@@ -63,7 +59,6 @@ public class VideoDownload extends Executor {
 
             @Override
             public void run() {
-                System.out.println("profile:" + profile);
                 videoProfile.set(profile);
             }
 
@@ -95,12 +90,12 @@ public class VideoDownload extends Executor {
         updateProgressOnUiThread(0, 0);
         updateSpeedOnUiThread("");
 
+        downloadData.progressProperty().bind(progress);
+        downloadData.statusProperty().bind(progressStatus);
+        downloadData.titleProperty().bind(videoTitle);
+        downloadData.videoProfileProperty().bind(videoProfile);
+        downloadData.speedProperty().bind(speed);
         this.downloadData = downloadData;
-        this.downloadData.progressProperty().bind(progress);
-        this.downloadData.statusProperty().bind(progressStatus);
-        this.downloadData.titleProperty().bind(videoTitle);
-        this.downloadData.videoProfileProperty().bind(videoProfile);
-        this.downloadData.speedProperty().bind(speed);
     }
 
     private void updateSpeedOnUiThread(String speed) {
@@ -117,14 +112,17 @@ public class VideoDownload extends Executor {
     public void download(DownloadData downloadData) {
         updateDownloadData(downloadData);
 
+        if (!downloadData.getDownloadDirectory().exists()) {
+            if (Debug.LOG) {
+                System.out.println("download directory not exist");
+            }
+            return;
+        }
+
         ChangeListener<String> listener = new ChangeListener<String>() {
 
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (Debug.LOG) {
-                    System.out.println(newValue);
-                }
-
                 {
                     Matcher matcher = TITLE_REGEX.matcher(newValue);
                     if (matcher.matches()) {
@@ -164,10 +162,12 @@ public class VideoDownload extends Executor {
 
             // reset download status
             updateProgressOnUiThread(0, 0);
+            updateSpeedOnUiThread("");
 
-            execute(new VideoDownloadParameters(downloadData.getDownloadDir(), downloadData.getUrl()), false);
+            execute(new VideoDownloadParameters(downloadData.getDownloadDirectory(), downloadData.getUrl()), false);
         }
 
+        updateSpeedOnUiThread("");
         isDownloading.set(false);
         status.removeListener(listener);
     }
@@ -182,6 +182,12 @@ public class VideoDownload extends Executor {
             }
 
         });
+    }
+
+    @Override
+    public void cancel() {
+        super.cancel();
+        forceCancel();
     }
 
     private DownloadData downloadData;
@@ -259,8 +265,9 @@ public class VideoDownload extends Executor {
 
                     if (downloadedSize.get() - lastDownloadedSize < MIN_DOWNLOAD_SIZE) {
                         System.out.println("restart download");
+                        updateSpeedOnUiThread("< 50 kB/s");
                         shouldRestartDownload = true;
-                        forceCancel();
+                        cancel();
                     }
 
                     lastDownloadedSize = downloadedSize.get();

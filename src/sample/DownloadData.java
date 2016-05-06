@@ -78,10 +78,6 @@ public class DownloadData {
         return title;
     }
 
-    public File getDownloadDir() {
-        return downloadDirectory.get();
-    }
-
     public ObjectProperty<File> downloadDirectoryProperty() {
         return downloadDirectory;
     }

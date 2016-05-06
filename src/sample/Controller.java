@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class Controller implements Initializable {
 
@@ -49,7 +50,7 @@ public class Controller implements Initializable {
 
         @Override
         public void cancel() {
-            videoDownload.forceCancel();
+            videoDownload.cancel();
         }
 
     }
@@ -101,9 +102,16 @@ public class Controller implements Initializable {
 
         @Override
         public void cancel() {
-            videoDownload.forceCancel();
+            videoDownload.cancel();
         }
 
+    }
+
+    @FXML
+    private void onClearClick(ActionEvent event) {
+        Looper.removeTask(MSG_UPDATE_VIDEO_INFO);
+        Looper.removeTask(MSG_DOWNLOAD);
+        downloadList.getItems().clear();
     }
 
     @FXML
@@ -113,7 +121,7 @@ public class Controller implements Initializable {
         }
 
         try {
-            java.awt.Desktop.getDesktop().open(downloadList.getSelectionModel().getSelectedItem().getDownloadDir());
+            java.awt.Desktop.getDesktop().open(downloadList.getSelectionModel().getSelectedItem().getDownloadDirectory());
         } catch (IOException e) {
             e.printStackTrace();
         }
