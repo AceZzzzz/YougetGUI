@@ -48,10 +48,10 @@ public class VideoDownload extends Executor {
         };
         status.addListener(listener);
         execute(new VideoInfoParameters(downloadData.getUrl()), false);
+        status.removeListener(listener);
         if (!findTitle[0]) {
             updateTitleOnUiThread("错误的视频网址");
         }
-        status.removeListener(listener);
     }
 
     private void updateVideoProfileOnUiThread(String profile) {
@@ -85,17 +85,17 @@ public class VideoDownload extends Executor {
             this.downloadData.speedProperty().unbind();
         }
 
-        updateTitleOnUiThread(downloadData.getTitle());
-        updateVideoProfileOnUiThread(downloadData.getVideoProfile());
-        updateProgressOnUiThread(0, 0);
-        updateSpeedOnUiThread("");
-
         downloadData.progressProperty().bind(progress);
         downloadData.statusProperty().bind(progressStatus);
         downloadData.titleProperty().bind(videoTitle);
         downloadData.videoProfileProperty().bind(videoProfile);
         downloadData.speedProperty().bind(speed);
         this.downloadData = downloadData;
+
+        updateTitleOnUiThread(downloadData.getTitle());
+        updateVideoProfileOnUiThread(downloadData.getVideoProfile());
+        updateProgressOnUiThread(0, 0);
+        updateSpeedOnUiThread("");
     }
 
     private void updateSpeedOnUiThread(String speed) {

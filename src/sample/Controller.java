@@ -17,6 +17,8 @@ import view.VideoUrlInputDialog;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -64,20 +66,22 @@ public class Controller implements Initializable {
 
             @Override
             public void accept(String s) {
+                List<DownloadData> addData = new ArrayList<DownloadData>();
                 for (String split : s.split("\n")) {
                     if (split.trim().isEmpty()) {
                         continue;
                     }
 
                     DownloadData downloadData = new DownloadData(split.trim(), directoryChooser.lastDirectoryProperty().get());
+                    addData.add(downloadData);
                     downloadList.getItems().add(downloadData);
                 }
 
-                for (DownloadData downloadData : downloadList.getItems()) {
+                for (DownloadData downloadData : addData) {
                     Looper.postTask(new UpdateVideoInfoTask(downloadData));
                 }
 
-                for (DownloadData downloadData : downloadList.getItems()) {
+                for (DownloadData downloadData : addData) {
                     Looper.postTask(new DownloadTask(downloadData));
                 }
             }
