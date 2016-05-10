@@ -1,5 +1,6 @@
 package sample;
 
+import binding.NullableObjectStringFormatter;
 import download.VideoDownload;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,14 +35,14 @@ public class Controller implements Initializable {
         downloadSpeedColumn.setCellValueFactory(new PropertyValueFactory<>("speed"));
         videoTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        downloadDirectoryView.textProperty().bind(directoryChooser.lastDirectoryProperty().asString());
+        downloadDirectoryView.textProperty().bind(new NullableObjectStringFormatter<>(directoryChooser.lastDirectoryProperty()));
     }
 
     private class DownloadTask extends Task {
 
         private final DownloadData downloadData;
 
-        public DownloadTask(DownloadData downloadData) {
+        DownloadTask(DownloadData downloadData) {
             super(MSG_DOWNLOAD, 0);
             this.downloadData = downloadData;
         }
@@ -95,7 +96,7 @@ public class Controller implements Initializable {
 
         private final DownloadData downloadData;
 
-        public UpdateVideoInfoTask(DownloadData downloadData) {
+        UpdateVideoInfoTask(DownloadData downloadData) {
             super(MSG_UPDATE_VIDEO_INFO, 0);
             this.downloadData = downloadData;
         }
@@ -137,7 +138,7 @@ public class Controller implements Initializable {
         directoryChooser.show(downloadList.getScene().getWindow());
     }
 
-    private final SmartDirectoryChooser directoryChooser = new SmartDirectoryChooser();
+    private final SmartDirectoryChooser directoryChooser = new SmartDirectoryChooser(getClass());
 
     @FXML
     private Label downloadDirectoryView;
