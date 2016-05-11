@@ -137,7 +137,7 @@ public class VideoDownload extends Executor {
                     }
                 }
 
-                for (String split : newValue.split(" ")) {
+                for (String split : newValue.split("[()]")) {
                     Matcher matcher = PROGRESS_REGEX.matcher(split);
                     if (matcher.matches()) {
                         updateProgressOnUiThread(Double.parseDouble(matcher.group("downloaded")), Double.parseDouble(matcher.group("total")));
@@ -210,7 +210,7 @@ public class VideoDownload extends Executor {
 
     private static final Pattern VIDEO_PROFILE_REGEX = Pattern.compile(".+video-profile:(?<videoprofile>.+)", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern PROGRESS_REGEX = Pattern.compile("\\(?(?<downloaded>[\\d\\.]+)/(?<total>[\\d\\.]+)MB\\)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PROGRESS_REGEX = Pattern.compile("(?<downloaded>[\\d\\. ]+)/(?<total>[\\d\\. ]+)MB", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern TITLE_REGEX = Pattern.compile(".*((title)|(playlist)):(?<title>.+)", Pattern.CASE_INSENSITIVE);
 
