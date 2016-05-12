@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/YougetGUI</output-path>
     <properties id="javafx-properties">
       <options>
-        <option name="appClass" value="sample.Main" />
+        <option name="appClass" value="com.getting.yougetgui.Main" />
         <option name="description" value="" />
         <option name="htmlParamFile" value="" />
         <option name="paramFile" value="" />

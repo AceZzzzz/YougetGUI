@@ -1,4 +1,4 @@
-package sample;
+package download;
 
 import javafx.beans.property.*;
 

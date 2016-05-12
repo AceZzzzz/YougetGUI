@@ -1,6 +1,7 @@
-package sample;
+package com.getting.yougetgui;
 
 import binding.NullableObjectStringFormatter;
+import download.DownloadData;
 import download.VideoDownload;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
