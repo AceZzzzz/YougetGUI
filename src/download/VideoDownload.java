@@ -1,5 +1,6 @@
 package download;
 
+import com.sun.istack.internal.NotNull;
 import debug.Debug;
 import executor.Executor;
 import javafx.application.Platform;
@@ -75,7 +76,7 @@ public class VideoDownload extends Executor {
         });
     }
 
-    private void updateDownloadData(DownloadData downloadData) {
+    private void bind(@NotNull DownloadData downloadData) {
         if (this.downloadData != null) {
             this.downloadData.progressProperty().unbind();
             this.downloadData.statusProperty().unbind();
@@ -84,17 +85,29 @@ public class VideoDownload extends Executor {
             this.downloadData.speedProperty().unbind();
         }
 
+        videoTitle.set(downloadData.getTitle());
+        videoProfile.set(downloadData.getVideoProfile());
+        downloadedSize.set(0);
+        totalSize.set(0);
+        speed.set("");
+
+        this.downloadData = downloadData;
         downloadData.progressProperty().bind(progress);
         downloadData.statusProperty().bind(progressStatus);
         downloadData.titleProperty().bind(videoTitle);
         downloadData.videoProfileProperty().bind(videoProfile);
         downloadData.speedProperty().bind(speed);
-        this.downloadData = downloadData;
+    }
 
-        updateTitleOnUiThread(downloadData.getTitle());
-        updateVideoProfileOnUiThread(downloadData.getVideoProfile());
-        updateProgressOnUiThread(0, 0);
-        updateSpeedOnUiThread("");
+    private void updateDownloadData(@NotNull DownloadData downloadData) {
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                bind(downloadData);
+            }
+
+        });
     }
 
     private void updateSpeedOnUiThread(String speed) {
