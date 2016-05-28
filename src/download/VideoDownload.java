@@ -224,9 +224,9 @@ public class VideoDownload extends Executor {
 
     private static final Pattern PROGRESS_REGEX = Pattern.compile("(?<downloaded>[\\d\\. ]+)/(?<total>[\\d\\. ]+)MB", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern TITLE_REGEX = Pattern.compile(".*((title)|(playlist)):(?<title>.+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TITLE_REGEX = Pattern.compile(".*(title|playlist):(?<title>.+)", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern SPEED_REGEX = Pattern.compile(".+ (?<speed>\\d+ ((kB)|(MB))/s)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SPEED_REGEX = Pattern.compile(".+ (?<speed>\\d+ (kB|MB)/s)$", Pattern.CASE_INSENSITIVE);
 
     private final StringProperty speed = new SimpleStringProperty();
 
