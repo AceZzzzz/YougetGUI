@@ -16,42 +16,8 @@ import java.util.regex.Pattern;
 public class VideoDownload extends Executor {
 
     public VideoDownload() {
-        super(VideoDownload.class, "you-get-0.4.365-win32.exe");
-        new ProgressChecker().start();
-    }
-
-    public void updateVideoInfo(DownloadData downloadData) {
-        updateDownloadData(downloadData);
-
-        boolean[] findTitle = new boolean[]{false};
-        ChangeListener<String> listener = new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                // just get first title
-                if (!findTitle[0]) {
-                    Matcher matcher = TITLE_REGEX.matcher(newValue);
-                    if (matcher.matches()) {
-                        findTitle[0] = true;
-                        updateTitleOnUiThread(matcher.group("title").trim());
-                    }
-                }
-
-                {
-                    Matcher matcher = VIDEO_PROFILE_REGEX.matcher(newValue);
-                    if (matcher.matches()) {
-                        updateVideoProfileOnUiThread(matcher.group("videoprofile").trim());
-                    }
-                }
-
-            }
-        };
-        status.addListener(listener);
-        execute(new VideoInfoParameters(downloadData.getUrl()), false);
-        status.removeListener(listener);
-        if (!findTitle[0]) {
-            updateTitleOnUiThread("错误的视频网址");
-        }
+        super(VideoDownload.class, "you-get-0.4.455-win32.exe");
+//        new ProgressChecker().start();
     }
 
     private void updateVideoProfileOnUiThread(String profile) {

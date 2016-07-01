@@ -77,13 +77,6 @@ public class Controller implements Initializable {
                     DownloadData downloadData = new DownloadData(split.trim(), directoryChooser.lastDirectoryProperty().get());
                     addData.add(downloadData);
                     downloadList.getItems().add(downloadData);
-                }
-
-                for (DownloadData downloadData : addData) {
-                    Looper.postTask(new UpdateVideoInfoTask(downloadData));
-                }
-
-                for (DownloadData downloadData : addData) {
                     Looper.postTask(new DownloadTask(downloadData));
                 }
             }
@@ -91,32 +84,8 @@ public class Controller implements Initializable {
         });
     }
 
-    private static final Object MSG_UPDATE_VIDEO_INFO = new Object();
-
-    private class UpdateVideoInfoTask extends Task {
-
-        private final DownloadData downloadData;
-
-        UpdateVideoInfoTask(DownloadData downloadData) {
-            super(MSG_UPDATE_VIDEO_INFO, 0);
-            this.downloadData = downloadData;
-        }
-
-        @Override
-        public void run() {
-            videoDownload.updateVideoInfo(downloadData);
-        }
-
-        @Override
-        public void cancel() {
-            videoDownload.cancel();
-        }
-
-    }
-
     @FXML
     private void onClearClick(ActionEvent event) {
-        Looper.removeTask(MSG_UPDATE_VIDEO_INFO);
         Looper.removeTask(MSG_DOWNLOAD);
         downloadList.getItems().clear();
     }
