@@ -1,6 +1,9 @@
 package com.getting.yougetgui;
 
-import binding.NullableObjectStringFormatter;
+import com.getting.util.Looper;
+import com.getting.util.PathRecord;
+import com.getting.util.Task;
+import com.getting.util.binding.NullableObjectStringFormatter;
 import download.DownloadData;
 import download.VideoDownload;
 import javafx.event.ActionEvent;
@@ -11,16 +14,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
-import ui.SmartDirectoryChooser;
-import util.Looper;
-import util.Task;
+import javafx.stage.DirectoryChooser;
 import view.VideoUrlInputDialog;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -36,7 +35,7 @@ public class Controller implements Initializable {
         downloadSpeedColumn.setCellValueFactory(new PropertyValueFactory<>("speed"));
         videoTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        downloadDirectoryView.textProperty().bind(new NullableObjectStringFormatter<>(directoryChooser.lastDirectoryProperty()));
+        downloadDirectoryView.textProperty().bind(new NullableObjectStringFormatter<>(pathRecord.pathProperty()));
     }
 
     private class DownloadTask extends Task {
@@ -68,26 +67,18 @@ public class Controller implements Initializable {
 
             @Override
             public void accept(String s) {
-                List<DownloadData> addData = new ArrayList<DownloadData>();
                 for (String split : s.split("\n")) {
                     if (split.trim().isEmpty()) {
                         continue;
                     }
 
-                    DownloadData downloadData = new DownloadData(split.trim(), directoryChooser.lastDirectoryProperty().get());
-                    addData.add(downloadData);
+                    DownloadData downloadData = new DownloadData(split.trim(), pathRecord.getPath());
                     downloadList.getItems().add(downloadData);
                     Looper.postTask(new DownloadTask(downloadData));
                 }
             }
 
         });
-    }
-
-    @FXML
-    private void onClearClick(ActionEvent event) {
-        Looper.removeTask(MSG_DOWNLOAD);
-        downloadList.getItems().clear();
     }
 
     @FXML
@@ -105,10 +96,12 @@ public class Controller implements Initializable {
 
     @FXML
     private void onSetDownloadDirectoryClick() {
-        directoryChooser.show(downloadList.getScene().getWindow());
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File directory = directoryChooser.showDialog(downloadList.getScene().getWindow());
+        pathRecord.set(directory);
     }
 
-    private final SmartDirectoryChooser directoryChooser = new SmartDirectoryChooser(getClass());
+    private final PathRecord pathRecord = new PathRecord(getClass());
 
     @FXML
     private Label downloadDirectoryView;

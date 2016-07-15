@@ -1,6 +1,7 @@
 package download;
 
-import executor.Parameters;
+
+import com.getting.util.executor.Parameters;
 
 import java.io.File;
 import java.util.ArrayList;

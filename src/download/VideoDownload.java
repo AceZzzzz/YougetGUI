@@ -1,8 +1,7 @@
 package download;
 
+import com.getting.util.executor.Executor;
 import com.sun.istack.internal.NotNull;
-import debug.Debug;
-import executor.Executor;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -17,7 +16,6 @@ public class VideoDownload extends Executor {
 
     public VideoDownload() {
         super(VideoDownload.class, "you-get-0.4.455-win32.exe");
-//        new ProgressChecker().start();
     }
 
     private void updateVideoProfileOnUiThread(String profile) {
@@ -65,7 +63,7 @@ public class VideoDownload extends Executor {
         downloadData.speedProperty().bind(speed);
     }
 
-    private void updateDownloadData(@NotNull DownloadData downloadData) {
+    private void updateDownloadDataOnUiThread(@NotNull DownloadData downloadData) {
         Platform.runLater(new Runnable() {
 
             @Override
@@ -88,12 +86,9 @@ public class VideoDownload extends Executor {
     }
 
     public void download(DownloadData downloadData) {
-        updateDownloadData(downloadData);
+        updateDownloadDataOnUiThread(downloadData);
 
         if (!downloadData.getDownloadDirectory().exists()) {
-            if (Debug.LOG) {
-                System.out.println("download directory not exist");
-            }
             return;
         }
 
@@ -130,24 +125,12 @@ public class VideoDownload extends Executor {
                 }
             }
         };
-        status.addListener(listener);
-        isDownloading.set(true);
-
-        boolean isFirstRun = true;
-        while (isFirstRun || shouldRestartDownload) {
-            isFirstRun = false;
-            shouldRestartDownload = false;
-
-            // reset download status
-            updateProgressOnUiThread(0, 0);
-            updateSpeedOnUiThread("");
-
-            execute(new VideoDownloadParameters(downloadData.getDownloadDirectory(), downloadData.getUrl()), false);
-        }
-
+        executorOutputMessage.addListener(listener);
+        updateProgressOnUiThread(0, 0);
         updateSpeedOnUiThread("");
-        isDownloading.set(false);
-        status.removeListener(listener);
+        execute(new VideoDownloadParameters(downloadData.getDownloadDirectory(), downloadData.getUrl()), false);
+        updateSpeedOnUiThread("");
+        executorOutputMessage.removeListener(listener);
     }
 
     private void updateProgressOnUiThread(double downloadedSize, double totalSize) {
@@ -162,17 +145,7 @@ public class VideoDownload extends Executor {
         });
     }
 
-    @Override
-    public void cancel() {
-        super.cancel();
-        forceCancel();
-    }
-
     private DownloadData downloadData;
-
-    private boolean shouldRestartDownload = false;
-
-    private final BooleanProperty isDownloading = new SimpleBooleanProperty();
 
     private final DoubleProperty downloadedSize = new SimpleDoubleProperty();
 
@@ -195,66 +168,5 @@ public class VideoDownload extends Executor {
     private static final Pattern SPEED_REGEX = Pattern.compile(".+ (?<speed>\\d+ (kB|MB)/s)$", Pattern.CASE_INSENSITIVE);
 
     private final StringProperty speed = new SimpleStringProperty();
-
-    private class ProgressChecker extends Thread {
-
-        public ProgressChecker() {
-            setDaemon(true);
-        }
-
-        private final long CHECK_INTERVAL = 60;
-
-        // MB/s
-        private final double MIN_DOWNLOAD_SPEED = 0.05;
-
-        private final double MIN_DOWNLOAD_SIZE = CHECK_INTERVAL * MIN_DOWNLOAD_SPEED;
-
-        private double lastDownloadedSize;
-
-        @Override
-        public void run() {
-            try {
-                while (true) {
-                    Thread.sleep(CHECK_INTERVAL * 1000);
-
-                    if (!isDownloading.get()) {
-                        continue;
-                    }
-
-                    if (Debug.LOG) {
-                        System.out.println("check: " + lastDownloadedSize + " " + downloadedSize.get() + "/" + totalSize.get());
-                    }
-
-                    // if download not start yet
-                    if (totalSize.get() < 1) {
-                        continue;
-                    }
-
-                    // if video is merging
-                    if (totalSize.get() - downloadedSize.get() < 1) {
-                        continue;
-                    }
-
-                    // if something is wrong, EX: download restart
-                    if (lastDownloadedSize > downloadedSize.get()) {
-                        lastDownloadedSize = downloadedSize.get();
-                        continue;
-                    }
-
-                    if (downloadedSize.get() - lastDownloadedSize < MIN_DOWNLOAD_SIZE) {
-                        System.out.println("restart download");
-                        updateSpeedOnUiThread("< 50 kB/s");
-                        shouldRestartDownload = true;
-                        cancel();
-                    }
-
-                    lastDownloadedSize = downloadedSize.get();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
 }
