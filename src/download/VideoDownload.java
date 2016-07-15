@@ -40,35 +40,35 @@ public class VideoDownload extends Executor {
         });
     }
 
-    private void bind(@NotNull DownloadData downloadData) {
-        if (this.downloadData != null) {
-            this.downloadData.progressProperty().unbind();
-            this.downloadData.statusProperty().unbind();
-            this.downloadData.titleProperty().unbind();
-            this.downloadData.videoProfileProperty().unbind();
-            this.downloadData.speedProperty().unbind();
+    private void bind(@NotNull VideoDownloadParameter videoDownloadParameter) {
+        if (this.videoDownloadParameter != null) {
+            this.videoDownloadParameter.progressProperty().unbind();
+            this.videoDownloadParameter.statusProperty().unbind();
+            this.videoDownloadParameter.titleProperty().unbind();
+            this.videoDownloadParameter.videoProfileProperty().unbind();
+            this.videoDownloadParameter.speedProperty().unbind();
         }
 
-        videoTitle.set(downloadData.getTitle());
-        videoProfile.set(downloadData.getVideoProfile());
+        videoTitle.set(videoDownloadParameter.getTitle());
+        videoProfile.set(videoDownloadParameter.getVideoProfile());
         downloadedSize.set(0);
         totalSize.set(0);
         speed.set("");
 
-        this.downloadData = downloadData;
-        downloadData.progressProperty().bind(progress);
-        downloadData.statusProperty().bind(progressStatus);
-        downloadData.titleProperty().bind(videoTitle);
-        downloadData.videoProfileProperty().bind(videoProfile);
-        downloadData.speedProperty().bind(speed);
+        this.videoDownloadParameter = videoDownloadParameter;
+        videoDownloadParameter.progressProperty().bind(progress);
+        videoDownloadParameter.statusProperty().bind(progressStatus);
+        videoDownloadParameter.titleProperty().bind(videoTitle);
+        videoDownloadParameter.videoProfileProperty().bind(videoProfile);
+        videoDownloadParameter.speedProperty().bind(speed);
     }
 
-    private void updateDownloadDataOnUiThread(@NotNull DownloadData downloadData) {
+    private void updateDownloadDataOnUiThread(@NotNull VideoDownloadParameter videoDownloadParameter) {
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
-                bind(downloadData);
+                bind(videoDownloadParameter);
             }
 
         });
@@ -85,10 +85,10 @@ public class VideoDownload extends Executor {
         });
     }
 
-    public void download(DownloadData downloadData) {
-        updateDownloadDataOnUiThread(downloadData);
+    public void download(VideoDownloadParameter videoDownloadParameter) {
+        updateDownloadDataOnUiThread(videoDownloadParameter);
 
-        if (!downloadData.getDownloadDirectory().exists()) {
+        if (!videoDownloadParameter.getDownloadDirectory().exists()) {
             return;
         }
 
@@ -128,7 +128,7 @@ public class VideoDownload extends Executor {
         executorOutputMessage.addListener(listener);
         updateProgressOnUiThread(0, 0);
         updateSpeedOnUiThread("");
-        execute(new VideoDownloadParameters(downloadData.getDownloadDirectory(), downloadData.getUrl()), false);
+        execute(new VideoDownloadParameter(videoDownloadParameter.getUrl(), videoDownloadParameter.getDownloadDirectory()), false);
         updateSpeedOnUiThread("");
         executorOutputMessage.removeListener(listener);
     }
@@ -145,7 +145,7 @@ public class VideoDownload extends Executor {
         });
     }
 
-    private DownloadData downloadData;
+    private VideoDownloadParameter videoDownloadParameter;
 
     private final DoubleProperty downloadedSize = new SimpleDoubleProperty();
 

@@ -1,11 +1,23 @@
 package download;
 
+import com.getting.util.executor.Parameters;
 import javafx.beans.property.*;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class DownloadData {
+public class VideoDownloadParameter implements Parameters {
+
+    @Override
+    public List<String> build() {
+        List<String> command = new ArrayList<>();
+        command.add("-o");
+        command.add(downloadDirectory.get().getAbsolutePath());
+        command.add(url.get());
+        return command;
+    }
 
     private final StringProperty videoProfile = new SimpleStringProperty();
 
@@ -29,7 +41,7 @@ public class DownloadData {
         return speed;
     }
 
-    public DownloadData(String url, File downloadDirectory) {
+    public VideoDownloadParameter(String url, File downloadDirectory) {
         this.url.set(url);
         this.downloadDirectory.set(downloadDirectory);
     }

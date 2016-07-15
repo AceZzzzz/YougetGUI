@@ -4,7 +4,7 @@ import com.getting.util.Looper;
 import com.getting.util.PathRecord;
 import com.getting.util.Task;
 import com.getting.util.binding.NullableObjectStringFormatter;
-import download.DownloadData;
+import download.VideoDownloadParameter;
 import download.VideoDownload;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,16 +40,16 @@ public class Controller implements Initializable {
 
     private class DownloadTask extends Task {
 
-        private final DownloadData downloadData;
+        private final VideoDownloadParameter videoDownloadParameter;
 
-        DownloadTask(DownloadData downloadData) {
+        DownloadTask(VideoDownloadParameter videoDownloadParameter) {
             super(MSG_DOWNLOAD, 0);
-            this.downloadData = downloadData;
+            this.videoDownloadParameter = videoDownloadParameter;
         }
 
         @Override
         public void run() {
-            videoDownload.download(downloadData);
+            videoDownload.download(videoDownloadParameter);
         }
 
         @Override
@@ -72,9 +72,9 @@ public class Controller implements Initializable {
                         continue;
                     }
 
-                    DownloadData downloadData = new DownloadData(split.trim(), pathRecord.getPath());
-                    downloadList.getItems().add(downloadData);
-                    Looper.postTask(new DownloadTask(downloadData));
+                    VideoDownloadParameter videoDownloadParameter = new VideoDownloadParameter(split.trim(), pathRecord.getPath());
+                    downloadList.getItems().add(videoDownloadParameter);
+                    Looper.postTask(new DownloadTask(videoDownloadParameter));
                 }
             }
 
@@ -107,25 +107,25 @@ public class Controller implements Initializable {
     private Label downloadDirectoryView;
 
     @FXML
-    private TableColumn<DownloadData, String> videoTitleColumn;
+    private TableColumn<VideoDownloadParameter, String> videoTitleColumn;
 
     @FXML
-    private TableColumn<DownloadData, String> videoProfileColumn;
+    private TableColumn<VideoDownloadParameter, String> videoProfileColumn;
 
     @FXML
-    private TableColumn<DownloadData, File> downloadDirectoryColumn;
+    private TableColumn<VideoDownloadParameter, File> downloadDirectoryColumn;
 
     @FXML
-    private TableView<DownloadData> downloadList;
+    private TableView<VideoDownloadParameter> downloadList;
 
     @FXML
-    private TableColumn<DownloadData, String> downloadStatusColumn;
+    private TableColumn<VideoDownloadParameter, String> downloadStatusColumn;
 
     @FXML
-    private TableColumn<DownloadData, Double> downloadProgressColumn;
+    private TableColumn<VideoDownloadParameter, Double> downloadProgressColumn;
 
     @FXML
-    private TableColumn<DownloadData, String> downloadSpeedColumn;
+    private TableColumn<VideoDownloadParameter, String> downloadSpeedColumn;
 
     private final VideoDownload videoDownload = new VideoDownload();
 
