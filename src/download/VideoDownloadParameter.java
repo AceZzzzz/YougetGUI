@@ -21,13 +21,13 @@ public class VideoDownloadParameter implements Parameters {
 
     private final StringProperty videoProfile = new SimpleStringProperty();
 
-    private final StringProperty url = new SimpleStringProperty();
+    protected final StringProperty url = new SimpleStringProperty();
 
     private final StringProperty status = new SimpleStringProperty();
 
     private final DoubleProperty progress = new SimpleDoubleProperty();
 
-    private final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
+    protected final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
 
     private final StringProperty title = new SimpleStringProperty();
 

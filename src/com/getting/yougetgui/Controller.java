@@ -4,6 +4,7 @@ import com.getting.util.Looper;
 import com.getting.util.PathRecord;
 import com.getting.util.Task;
 import com.getting.util.binding.NullableObjectStringFormatter;
+import download.LiveStreamDownloadParameter;
 import download.VideoDownloadParameter;
 import download.VideoDownload;
 import javafx.event.ActionEvent;
@@ -38,6 +39,30 @@ public class Controller implements Initializable {
         downloadDirectoryView.textProperty().bind(new NullableObjectStringFormatter<>(pathRecord.pathProperty()));
     }
 
+    @FXML
+    public void onAddLiveStreamUrlClick(ActionEvent actionEvent) {
+        VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
+        videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
+        videoUrlInputDialog.showAndWait().ifPresent(new Consumer<String>() {
+
+            @Override
+            public void accept(String s) {
+                for (String split : s.split("\n")) {
+                    if (split.trim().isEmpty()) {
+                        continue;
+                    }
+
+                    LiveStreamDownloadParameter videoDownloadParameter = new LiveStreamDownloadParameter(split.trim(), pathRecord.getPath());
+                    downloadList.getItems().add(videoDownloadParameter);
+                    Looper.postTask(new DownloadTask(videoDownloadParameter));
+                    // just the first one is available
+                    break;
+                }
+            }
+
+        });
+    }
+
     private class DownloadTask extends Task {
 
         private final VideoDownloadParameter videoDownloadParameter;
@@ -49,7 +74,7 @@ public class Controller implements Initializable {
 
         @Override
         public void run() {
-            videoDownload.download(videoDownloadParameter);
+            videoDownload.download(videoDownloadParameter, false);
         }
 
         @Override
@@ -98,6 +123,10 @@ public class Controller implements Initializable {
     private void onSetDownloadDirectoryClick() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File directory = directoryChooser.showDialog(downloadList.getScene().getWindow());
+        if (directory == null) {
+            return;
+        }
+
         pathRecord.set(directory);
     }
 

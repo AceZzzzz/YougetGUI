@@ -51,9 +51,9 @@ public class VideoDownload extends Executor {
 
         videoTitle.set(videoDownloadParameter.getTitle());
         videoProfile.set(videoDownloadParameter.getVideoProfile());
-        downloadedSize.set(0);
-        totalSize.set(0);
         speed.set("");
+        progress.set(Double.NEGATIVE_INFINITY);
+        progressStatus.set("");
 
         this.videoDownloadParameter = videoDownloadParameter;
         videoDownloadParameter.progressProperty().bind(progress);
@@ -85,7 +85,7 @@ public class VideoDownload extends Executor {
         });
     }
 
-    public void download(VideoDownloadParameter videoDownloadParameter) {
+    public void download(VideoDownloadParameter videoDownloadParameter, boolean infinite) {
         updateDownloadDataOnUiThread(videoDownloadParameter);
 
         if (!videoDownloadParameter.getDownloadDirectory().exists()) {
@@ -113,7 +113,8 @@ public class VideoDownload extends Executor {
                 for (String split : newValue.split("[()]")) {
                     Matcher matcher = PROGRESS_REGEX.matcher(split);
                     if (matcher.matches()) {
-                        updateProgressOnUiThread(Double.parseDouble(matcher.group("downloaded")), Double.parseDouble(matcher.group("total")));
+                        updateProgressStatusOnUiThread(matcher.group("status"));
+                        updateProgressOnUiThread(matcher.group("downloaded"), matcher.group("total"));
                     }
                 }
 
@@ -126,20 +127,47 @@ public class VideoDownload extends Executor {
             }
         };
         executorOutputMessage.addListener(listener);
-        updateProgressOnUiThread(0, 0);
-        updateSpeedOnUiThread("");
-        execute(new VideoDownloadParameter(videoDownloadParameter.getUrl(), videoDownloadParameter.getDownloadDirectory()), false);
+
+        if (infinite) {
+            try {
+                while (true) {
+                    execute(videoDownloadParameter, false);
+                    Thread.sleep(REDOWNLOAD_WAIT_TIME);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            execute(videoDownloadParameter, false);
+        }
+
         updateSpeedOnUiThread("");
         executorOutputMessage.removeListener(listener);
     }
 
-    private void updateProgressOnUiThread(double downloadedSize, double totalSize) {
+    private static final long REDOWNLOAD_WAIT_TIME = 10 * 1000;
+
+    private void updateProgressOnUiThread(String downloadedSize, String totalSize) {
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
-                VideoDownload.this.downloadedSize.set(downloadedSize);
-                VideoDownload.this.totalSize.set(totalSize);
+                try {
+                    progress.set(Double.parseDouble(downloadedSize) / Double.parseDouble(totalSize));
+                } catch (NumberFormatException e) {
+                    progress.set(Double.NEGATIVE_INFINITY);
+                }
+            }
+
+        });
+    }
+
+    private void updateProgressStatusOnUiThread(String status) {
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                VideoDownload.this.progressStatus.set(status.trim());
             }
 
         });
@@ -147,21 +175,17 @@ public class VideoDownload extends Executor {
 
     private VideoDownloadParameter videoDownloadParameter;
 
-    private final DoubleProperty downloadedSize = new SimpleDoubleProperty();
-
-    private final DoubleProperty totalSize = new SimpleDoubleProperty();
-
     private final StringProperty videoProfile = new SimpleStringProperty();
 
     private final StringProperty videoTitle = new SimpleStringProperty();
 
-    private final ObservableDoubleValue progress = downloadedSize.divide(totalSize);
+    private final DoubleProperty progress = new SimpleDoubleProperty();
 
-    private final ObservableStringValue progressStatus = downloadedSize.asString().concat("/").concat(totalSize.asString()).concat(" MB");
+    private final StringProperty progressStatus = new SimpleStringProperty();
 
     private static final Pattern VIDEO_PROFILE_REGEX = Pattern.compile(".+video-profile:(?<videoprofile>.+)", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern PROGRESS_REGEX = Pattern.compile("(?<downloaded>[\\d\\. ]+)/(?<total>[\\d\\. ]+)MB", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PROGRESS_REGEX = Pattern.compile("(?<status>(?<downloaded>.+)/(?<total>.+)MB)", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern TITLE_REGEX = Pattern.compile(".*(title|playlist):(?<title>.+)", Pattern.CASE_INSENSITIVE);
 
