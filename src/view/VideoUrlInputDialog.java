@@ -10,8 +10,6 @@ import javafx.util.Callback;
 public class VideoUrlInputDialog extends Dialog<String> {
 
     public VideoUrlInputDialog() {
-        setTitle("新建下载");
-
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(textArea);
         getDialogPane().setContent(borderPane);

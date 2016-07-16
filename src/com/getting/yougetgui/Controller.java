@@ -42,6 +42,7 @@ public class Controller implements Initializable {
     @FXML
     public void onAddLiveStreamUrlClick(ActionEvent actionEvent) {
         VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
+        videoUrlInputDialog.setTitle("新建直播下载");
         videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
         videoUrlInputDialog.showAndWait().ifPresent(new Consumer<String>() {
 
@@ -54,7 +55,7 @@ public class Controller implements Initializable {
 
                     LiveStreamDownloadParameter videoDownloadParameter = new LiveStreamDownloadParameter(split.trim(), pathRecord.getPath());
                     downloadList.getItems().add(videoDownloadParameter);
-                    Looper.postTask(new DownloadTask(videoDownloadParameter));
+                    Looper.postTask(new DownloadTask(videoDownloadParameter, true));
                     // just the first one is available
                     break;
                 }
@@ -66,15 +67,17 @@ public class Controller implements Initializable {
     private class DownloadTask extends Task {
 
         private final VideoDownloadParameter videoDownloadParameter;
+        private final boolean infinite;
 
-        DownloadTask(VideoDownloadParameter videoDownloadParameter) {
+        DownloadTask(VideoDownloadParameter videoDownloadParameter, boolean infinite) {
             super(MSG_DOWNLOAD, 0);
             this.videoDownloadParameter = videoDownloadParameter;
+            this.infinite = infinite;
         }
 
         @Override
         public void run() {
-            videoDownload.download(videoDownloadParameter, false);
+            videoDownload.download(videoDownloadParameter, infinite);
         }
 
         @Override
@@ -87,6 +90,7 @@ public class Controller implements Initializable {
     @FXML
     private void onAddUrlClick(ActionEvent event) {
         VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
+        videoUrlInputDialog.setTitle("新建下载");
         videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
         videoUrlInputDialog.showAndWait().ifPresent(new Consumer<String>() {
 
@@ -99,7 +103,7 @@ public class Controller implements Initializable {
 
                     VideoDownloadParameter videoDownloadParameter = new VideoDownloadParameter(split.trim(), pathRecord.getPath());
                     downloadList.getItems().add(videoDownloadParameter);
-                    Looper.postTask(new DownloadTask(videoDownloadParameter));
+                    Looper.postTask(new DownloadTask(videoDownloadParameter, false));
                 }
             }
 

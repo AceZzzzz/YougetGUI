@@ -5,8 +5,6 @@ import com.sun.istack.internal.NotNull;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableDoubleValue;
-import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 
 import java.util.regex.Matcher;
@@ -132,7 +130,10 @@ public class VideoDownload extends Executor {
             try {
                 while (true) {
                     execute(videoDownloadParameter, false);
-                    Thread.sleep(REDOWNLOAD_WAIT_TIME);
+                    Thread.sleep(RESTART_DOWNLOAD_WAIT_TIME);
+                    if (LOG) {
+                        System.out.println("restart download");
+                    }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -145,7 +146,7 @@ public class VideoDownload extends Executor {
         executorOutputMessage.removeListener(listener);
     }
 
-    private static final long REDOWNLOAD_WAIT_TIME = 10 * 1000;
+    private static final long RESTART_DOWNLOAD_WAIT_TIME = 10 * 1000;
 
     private void updateProgressOnUiThread(String downloadedSize, String totalSize) {
         Platform.runLater(new Runnable() {

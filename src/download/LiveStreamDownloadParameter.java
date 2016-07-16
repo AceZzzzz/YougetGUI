@@ -9,6 +9,7 @@ public class LiveStreamDownloadParameter extends VideoDownloadParameter {
     @Override
     public List<String> build() {
         List<String> command = new ArrayList<>();
+        command.add("-d");
         command.add("-O");
         command.add("" + System.currentTimeMillis() + ".mkv");
         command.add("-o");
