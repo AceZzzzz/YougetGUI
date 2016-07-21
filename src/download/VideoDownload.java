@@ -146,7 +146,7 @@ public class VideoDownload extends Executor {
         executorOutputMessage.removeListener(listener);
     }
 
-    private static final long RESTART_DOWNLOAD_WAIT_TIME = 10 * 1000;
+    private static final long RESTART_DOWNLOAD_WAIT_TIME = 3 * 1000;
 
     private void updateProgressOnUiThread(String downloadedSize, String totalSize) {
         Platform.runLater(new Runnable() {
