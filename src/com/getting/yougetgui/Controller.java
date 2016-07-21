@@ -4,7 +4,6 @@ import com.getting.util.Looper;
 import com.getting.util.PathRecord;
 import com.getting.util.Task;
 import com.getting.util.binding.NullableObjectStringFormatter;
-import download.LiveStreamDownloadParameter;
 import download.VideoDownloadParameter;
 import download.VideoDownload;
 import javafx.event.ActionEvent;
@@ -37,31 +36,6 @@ public class Controller implements Initializable {
         videoTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
         downloadDirectoryView.textProperty().bind(new NullableObjectStringFormatter<>(pathRecord.pathProperty()));
-    }
-
-    @FXML
-    public void onAddLiveStreamUrlClick(ActionEvent actionEvent) {
-        VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
-        videoUrlInputDialog.setTitle("新建直播下载");
-        videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
-        videoUrlInputDialog.showAndWait().ifPresent(new Consumer<String>() {
-
-            @Override
-            public void accept(String s) {
-                for (String split : s.split("\n")) {
-                    if (split.trim().isEmpty()) {
-                        continue;
-                    }
-
-                    LiveStreamDownloadParameter videoDownloadParameter = new LiveStreamDownloadParameter(split.trim(), pathRecord.getPath());
-                    downloadList.getItems().add(videoDownloadParameter);
-                    Looper.postTask(new DownloadTask(videoDownloadParameter, true));
-                    // just the first one is available
-                    break;
-                }
-            }
-
-        });
     }
 
     private class DownloadTask extends Task {
