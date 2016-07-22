@@ -13,8 +13,8 @@ public class LiveStreamDownloadParameter extends VideoDownloadParameter {
         command.add("-O");
         command.add("" + System.currentTimeMillis() + ".flv");
         command.add("-o");
-        command.add(downloadDirectory.get().getAbsolutePath());
-        command.add(url.get());
+        command.add(getDownloadDirectory().getAbsolutePath());
+        command.add(getUrl());
         return command;
     }
 
