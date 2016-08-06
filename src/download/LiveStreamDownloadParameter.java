@@ -11,7 +11,7 @@ public class LiveStreamDownloadParameter extends VideoDownloadParameter {
         List<String> command = new ArrayList<>();
         command.add("-d");
         command.add("-O");
-        command.add("" + System.currentTimeMillis() + ".flv");
+        command.add("" + System.currentTimeMillis() + ".mkv");
         command.add("-o");
         command.add(getDownloadDirectory().getAbsolutePath());
         command.add(getUrl());

@@ -13,6 +13,7 @@ public class VideoDownloadParameter implements Parameters {
     @Override
     public List<String> build() {
         List<String> command = new ArrayList<>();
+        command.add("-d");
         command.add("-o");
         command.add(downloadDirectory.get().getAbsolutePath());
         command.add(url.get());
