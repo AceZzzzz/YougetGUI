@@ -12,12 +12,20 @@ public class VideoDownloadParameter implements Parameters {
 
     @Override
     public List<String> build() {
+        ensureDownloadDirectoryExist();
+
         List<String> command = new ArrayList<>();
         command.add("-d");
         command.add("-o");
         command.add(downloadDirectory.get().getAbsolutePath());
         command.add(url.get());
         return command;
+    }
+
+    private void ensureDownloadDirectoryExist() {
+        if (!downloadDirectory.get().exists()) {
+            downloadDirectory.get().mkdirs();
+        }
     }
 
     private final StringProperty videoProfile = new SimpleStringProperty();
