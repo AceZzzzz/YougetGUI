@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class VideoDownload extends Executor {
 
     public VideoDownload() {
-        super(VideoDownload.class, "you-get-0.4.455-win32.exe");
+        super(VideoDownload.class, "you-get-0.4.523-win32.exe");
     }
 
     private void updateVideoProfileOnUiThread(String profile) {
