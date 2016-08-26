@@ -87,7 +87,7 @@ public class VideoDownload extends Executor {
         updateDownloadDataOnUiThread(videoDownloadParameter);
 
         if (!videoDownloadParameter.getDownloadDirectory().exists()) {
-            return;
+            videoDownloadParameter.getDownloadDirectory().mkdirs();
         }
 
         ChangeListener<String> listener = new ChangeListener<String>() {

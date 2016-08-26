@@ -26,6 +26,13 @@
                                                     shortcut="UP"/>
                             </accelerator>
                         </MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#onAddLiveStreamUrlClick" text="新建直播地址下载">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP"
+                                                    shift="UP"
+                                                    shortcut="UP"/>
+                            </accelerator>
+                        </MenuItem>
                     </items>
                 </Menu>
             </menus>
@@ -52,7 +59,6 @@
                     <items>
                         <MenuItem mnemonicParsing="false" text="打开所在目录" onAction="#onOpenDownloadDirectoryClick"/>
                         <MenuItem mnemonicParsing="false" text="新建" onAction="#onAddUrlClick"/>
-                        <MenuItem mnemonicParsing="false" text="新建直播地址下载" onAction="#onAddLiveStreamUrlClick"/>
                     </items>
                 </ContextMenu>
             </contextMenu>

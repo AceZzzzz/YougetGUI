@@ -17,6 +17,7 @@
         <element id="extracted-dir" path="$PROJECT_DIR$/libs/controlsfx-8.40.10.jar" path-in-jar="/" />
         <element id="extracted-dir" path="$PROJECT_DIR$/libs/com.getting.tool.jar" path-in-jar="/" />
       </element>
+      <element id="file-copy" path="$PROJECT_DIR$/运行.bat" />
     </root>
   </artifact>
 </component>
