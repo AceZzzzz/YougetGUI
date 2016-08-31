@@ -20,6 +20,11 @@ public class VideoDownloadParameter implements Parameters {
         return command;
     }
 
+    @Override
+    public File getOutputDirectory() {
+        return downloadDirectory.get();
+    }
+
     private final StringProperty videoProfile = new SimpleStringProperty();
 
     private final StringProperty url = new SimpleStringProperty();
