@@ -53,15 +53,19 @@ public class Controller implements Initializable {
                         continue;
                     }
 
-                    LiveStreamDownloadParameter videoDownloadParameter = new LiveStreamDownloadParameter(split.trim(), pathRecord.getPath());
-                    downloadList.getItems().add(videoDownloadParameter);
-                    Looper.postTask(new DownloadTask(videoDownloadParameter, true));
+                    addDownloadTask(split.trim());
                     // just the first one is available
                     break;
                 }
             }
 
         });
+    }
+
+    private void addDownloadTask(String url) {
+        LiveStreamDownloadParameter videoDownloadParameter = new LiveStreamDownloadParameter(url, pathRecord.getPath());
+        downloadList.getItems().add(videoDownloadParameter);
+        downloadLooper.postTask(new DownloadTask(videoDownloadParameter, true));
     }
 
     private class DownloadTask extends Task {
@@ -101,9 +105,7 @@ public class Controller implements Initializable {
                         continue;
                     }
 
-                    VideoDownloadParameter videoDownloadParameter = new VideoDownloadParameter(split.trim(), pathRecord.getPath());
-                    downloadList.getItems().add(videoDownloadParameter);
-                    Looper.postTask(new DownloadTask(videoDownloadParameter, false));
+                    addDownloadTask(split);
                 }
             }
 
@@ -161,6 +163,8 @@ public class Controller implements Initializable {
     private TableColumn<VideoDownloadParameter, String> downloadSpeedColumn;
 
     private final VideoDownload videoDownload = new VideoDownload();
+
+    private final Looper downloadLooper = new Looper();
 
     private static final Object MSG_DOWNLOAD = new Object();
 
