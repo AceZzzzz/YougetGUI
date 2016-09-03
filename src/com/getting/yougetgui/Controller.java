@@ -53,7 +53,7 @@ public class Controller implements Initializable {
                         continue;
                     }
 
-                    addDownloadTask(split.trim());
+                    addLiveStreamDownloadTask(split.trim());
                     // just the first one is available
                     break;
                 }
@@ -63,6 +63,12 @@ public class Controller implements Initializable {
     }
 
     private void addDownloadTask(String url) {
+        VideoDownloadParameter videoDownloadParameter = new VideoDownloadParameter(url, pathRecord.getPath());
+        downloadList.getItems().add(videoDownloadParameter);
+        downloadLooper.postTask(new DownloadTask(videoDownloadParameter, false));
+    }
+
+    private void addLiveStreamDownloadTask(String url) {
         LiveStreamDownloadParameter videoDownloadParameter = new LiveStreamDownloadParameter(url, pathRecord.getPath());
         downloadList.getItems().add(videoDownloadParameter);
         downloadLooper.postTask(new DownloadTask(videoDownloadParameter, true));
@@ -105,7 +111,7 @@ public class Controller implements Initializable {
                         continue;
                     }
 
-                    addDownloadTask(split);
+                    addDownloadTask(split.trim());
                 }
             }
 
