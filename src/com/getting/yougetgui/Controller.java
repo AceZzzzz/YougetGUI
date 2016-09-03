@@ -40,7 +40,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void onAddLiveStreamUrlClick(ActionEvent actionEvent) {
+    public void onAddLiveStreamUrlClick() {
         VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
         videoUrlInputDialog.setTitle("新建直播下载");
         videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
@@ -98,7 +98,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void onAddUrlClick(ActionEvent event) {
+    private void onAddUrlClick() {
         VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
         videoUrlInputDialog.setTitle("新建下载");
         videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
@@ -119,7 +119,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void onOpenDownloadDirectoryClick(ActionEvent event) {
+    private void onOpenDownloadDirectoryClick() {
         if (downloadList.getSelectionModel().isEmpty()) {
             return;
         }
