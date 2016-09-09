@@ -7,8 +7,8 @@ import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
+import java.util.logging.MemoryHandler;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class VideoDownload extends Executor {
 
@@ -16,7 +16,7 @@ public class VideoDownload extends Executor {
         super(VideoDownload.class, "you-get-0.4.523-win32.exe");
     }
 
-    private void updateVideoProfileOnUiThread(String profile) {
+    private void updateVideoProfileOnUiThread(@NotNull String profile) {
         Platform.runLater(new Runnable() {
 
             @Override
@@ -27,7 +27,7 @@ public class VideoDownload extends Executor {
         });
     }
 
-    private void updateTitleOnUiThread(String title) {
+    private void updateTitleOnUiThread(@NotNull String title) {
         Platform.runLater(new Runnable() {
 
             @Override
@@ -90,35 +90,32 @@ public class VideoDownload extends Executor {
 
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                {
-                    Matcher matcher = TITLE_REGEX.matcher(newValue);
-                    if (matcher.matches()) {
-                        updateTitleOnUiThread(matcher.group("title").trim());
-                    }
+                if (newValue == null) {
+                    return;
                 }
 
-                {
-                    Matcher matcher = VIDEO_PROFILE_REGEX.matcher(newValue);
-                    if (matcher.matches()) {
-                        updateVideoProfileOnUiThread(matcher.group("videoprofile").trim());
-                    }
+                final String title = YougetUtil.getTitle(newValue);
+                if (title != null) {
+                    updateTitleOnUiThread(title);
                 }
 
-                for (String split : newValue.split("[()]")) {
-                    Matcher matcher = PROGRESS_REGEX.matcher(split);
-                    if (matcher.matches()) {
-                        updateProgressStatusOnUiThread(matcher.group("status"));
-                        updateProgressOnUiThread(matcher.group("downloaded"), matcher.group("total"));
-                    }
+                final String videoProfile = YougetUtil.getVideoProfile(newValue);
+                if (videoProfile != null) {
+                    updateVideoProfileOnUiThread(videoProfile);
                 }
 
-                {
-                    Matcher matcher = SPEED_REGEX.matcher(newValue);
-                    if (matcher.matches()) {
-                        updateSpeedOnUiThread(matcher.group("speed"));
-                    }
+                final YougetUtil.DownloadStatus downloadStatus = YougetUtil.getDownloadStatus(newValue);
+                if (downloadStatus != null) {
+                    updateProgressStatusOnUiThread(downloadStatus.description);
+                    updateProgressOnUiThread(downloadStatus.downloaded, downloadStatus.total);
+                }
+
+                final String speed = YougetUtil.getSpeed(newValue);
+                if (speed != null) {
+                    updateSpeedOnUiThread(speed);
                 }
             }
+
         };
         executorOutputMessage.addListener(listener);
 
@@ -127,9 +124,7 @@ public class VideoDownload extends Executor {
                 while (true) {
                     execute(videoDownloadParameter, false);
                     Thread.sleep(RESTART_DOWNLOAD_WAIT_TIME);
-                    if (LOG) {
-                        System.out.println("restart download");
-                    }
+                    System.out.println("restart download");
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -144,16 +139,12 @@ public class VideoDownload extends Executor {
 
     private static final long RESTART_DOWNLOAD_WAIT_TIME = 3 * 1000;
 
-    private void updateProgressOnUiThread(String downloadedSize, String totalSize) {
+    private void updateProgressOnUiThread(double downloadedSize, double totalSize) {
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
-                try {
-                    progress.set(Double.parseDouble(downloadedSize) / Double.parseDouble(totalSize));
-                } catch (NumberFormatException e) {
-                    progress.set(Double.NEGATIVE_INFINITY);
-                }
+                progress.set(downloadedSize / totalSize);
             }
 
         });
@@ -179,14 +170,6 @@ public class VideoDownload extends Executor {
     private final DoubleProperty progress = new SimpleDoubleProperty();
 
     private final StringProperty progressStatus = new SimpleStringProperty();
-
-    private static final Pattern VIDEO_PROFILE_REGEX = Pattern.compile(".+video-profile:(?<videoprofile>.+)", Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern PROGRESS_REGEX = Pattern.compile("(?<status>(?<downloaded>.+)/(?<total>.+)MB)", Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern TITLE_REGEX = Pattern.compile(".*(title|playlist):(?<title>.+)", Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern SPEED_REGEX = Pattern.compile(".+ (?<speed>\\d+ (kB|MB)/s)$", Pattern.CASE_INSENSITIVE);
 
     private final StringProperty speed = new SimpleStringProperty();
 

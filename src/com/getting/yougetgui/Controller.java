@@ -142,7 +142,7 @@ public class Controller implements Initializable {
         pathRecord.set(directory);
     }
 
-    private final PathRecord pathRecord = new PathRecord(getClass());
+    private final PathRecord pathRecord = new PathRecord(getClass(), "download directory");
 
     @FXML
     private Label downloadDirectoryView;
