@@ -6,6 +6,10 @@ import java.util.List;
 
 public class LiveStreamDownloadParameter extends VideoDownloadParameter {
 
+    public LiveStreamDownloadParameter(String url, File downloadDirectory) {
+        super(url, downloadDirectory);
+    }
+
     @Override
     public List<String> build() {
         List<String> command = new ArrayList<>();
@@ -16,10 +20,6 @@ public class LiveStreamDownloadParameter extends VideoDownloadParameter {
         command.add(getDownloadDirectory().getAbsolutePath());
         command.add(getUrl());
         return command;
-    }
-
-    public LiveStreamDownloadParameter(String url, File downloadDirectory) {
-        super(url, downloadDirectory);
     }
 
 }

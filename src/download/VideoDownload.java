@@ -3,39 +3,32 @@ package download;
 import com.getting.util.executor.Executor;
 import com.sun.istack.internal.NotNull;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-
-import java.util.logging.MemoryHandler;
-import java.util.regex.Matcher;
 
 public class VideoDownload extends Executor {
+
+    private static final long RESTART_DOWNLOAD_WAIT_TIME = 3 * 1000;
+    private final StringProperty videoProfile = new SimpleStringProperty();
+    private final StringProperty videoTitle = new SimpleStringProperty();
+    private final DoubleProperty progress = new SimpleDoubleProperty();
+    private final StringProperty progressStatus = new SimpleStringProperty();
+    private final StringProperty speed = new SimpleStringProperty();
+    private VideoDownloadParameter videoDownloadParameter;
 
     public VideoDownload() {
         super(VideoDownload.class, "you-get-0.4.523-win32.exe");
     }
 
     private void updateVideoProfileOnUiThread(@NotNull String profile) {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                videoProfile.set(profile);
-            }
-
-        });
+        Platform.runLater(() -> videoProfile.set(profile));
     }
 
     private void updateTitleOnUiThread(@NotNull String title) {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                videoTitle.set(title);
-            }
-
-        });
+        Platform.runLater(() -> videoTitle.set(title));
     }
 
     private void bind(@NotNull VideoDownloadParameter videoDownloadParameter) {
@@ -62,60 +55,41 @@ public class VideoDownload extends Executor {
     }
 
     private void updateDownloadDataOnUiThread(@NotNull VideoDownloadParameter videoDownloadParameter) {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                bind(videoDownloadParameter);
-            }
-
-        });
+        Platform.runLater(() -> bind(videoDownloadParameter));
     }
 
     private void updateSpeedOnUiThread(String speed) {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                VideoDownload.this.speed.set(speed);
-            }
-
-        });
+        Platform.runLater(() -> VideoDownload.this.speed.set(speed));
     }
 
     public void download(VideoDownloadParameter videoDownloadParameter, boolean infinite) {
         updateDownloadDataOnUiThread(videoDownloadParameter);
 
-        ChangeListener<String> listener = new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (newValue == null) {
-                    return;
-                }
-
-                final String title = YougetUtil.getTitle(newValue);
-                if (title != null) {
-                    updateTitleOnUiThread(title);
-                }
-
-                final String videoProfile = YougetUtil.getVideoProfile(newValue);
-                if (videoProfile != null) {
-                    updateVideoProfileOnUiThread(videoProfile);
-                }
-
-                final YougetUtil.DownloadStatus downloadStatus = YougetUtil.getDownloadStatus(newValue);
-                if (downloadStatus != null) {
-                    updateProgressStatusOnUiThread(downloadStatus.description);
-                    updateProgressOnUiThread(downloadStatus.downloaded, downloadStatus.total);
-                }
-
-                final String speed = YougetUtil.getSpeed(newValue);
-                if (speed != null) {
-                    updateSpeedOnUiThread(speed);
-                }
+        ChangeListener<String> listener = (observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
             }
 
+            final String title = YougetUtil.getTitle(newValue);
+            if (title != null) {
+                updateTitleOnUiThread(title);
+            }
+
+            final String videoProfile1 = YougetUtil.getVideoProfile(newValue);
+            if (videoProfile1 != null) {
+                updateVideoProfileOnUiThread(videoProfile1);
+            }
+
+            final YougetUtil.DownloadStatus downloadStatus = YougetUtil.getDownloadStatus(newValue);
+            if (downloadStatus != null) {
+                updateProgressStatusOnUiThread(downloadStatus.description);
+                updateProgressOnUiThread(downloadStatus.downloaded, downloadStatus.total);
+            }
+
+            final String speed1 = YougetUtil.getSpeed(newValue);
+            if (speed1 != null) {
+                updateSpeedOnUiThread(speed1);
+            }
         };
         executorOutputMessage.addListener(listener);
 
@@ -137,40 +111,12 @@ public class VideoDownload extends Executor {
         executorOutputMessage.removeListener(listener);
     }
 
-    private static final long RESTART_DOWNLOAD_WAIT_TIME = 3 * 1000;
-
     private void updateProgressOnUiThread(double downloadedSize, double totalSize) {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                progress.set(downloadedSize / totalSize);
-            }
-
-        });
+        Platform.runLater(() -> progress.set(downloadedSize / totalSize));
     }
 
     private void updateProgressStatusOnUiThread(String status) {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                VideoDownload.this.progressStatus.set(status.trim());
-            }
-
-        });
+        Platform.runLater(() -> VideoDownload.this.progressStatus.set(status.trim()));
     }
-
-    private VideoDownloadParameter videoDownloadParameter;
-
-    private final StringProperty videoProfile = new SimpleStringProperty();
-
-    private final StringProperty videoTitle = new SimpleStringProperty();
-
-    private final DoubleProperty progress = new SimpleDoubleProperty();
-
-    private final StringProperty progressStatus = new SimpleStringProperty();
-
-    private final StringProperty speed = new SimpleStringProperty();
 
 }

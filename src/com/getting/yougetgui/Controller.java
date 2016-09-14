@@ -5,9 +5,8 @@ import com.getting.util.PathRecord;
 import com.getting.util.Task;
 import com.getting.util.binding.NullableObjectStringFormatter;
 import download.LiveStreamDownloadParameter;
-import download.VideoDownloadParameter;
 import download.VideoDownload;
-import javafx.event.ActionEvent;
+import download.VideoDownloadParameter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -22,9 +21,29 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public class Controller implements Initializable {
+
+    private static final Object MSG_DOWNLOAD = new Object();
+    private final PathRecord pathRecord = new PathRecord(getClass(), "download directory");
+    private final VideoDownload videoDownload = new VideoDownload();
+    private final Looper downloadLooper = new Looper();
+    @FXML
+    private Label downloadDirectoryView;
+    @FXML
+    private TableColumn<VideoDownloadParameter, String> videoTitleColumn;
+    @FXML
+    private TableColumn<VideoDownloadParameter, String> videoProfileColumn;
+    @FXML
+    private TableColumn<VideoDownloadParameter, File> downloadDirectoryColumn;
+    @FXML
+    private TableView<VideoDownloadParameter> downloadList;
+    @FXML
+    private TableColumn<VideoDownloadParameter, String> downloadStatusColumn;
+    @FXML
+    private TableColumn<VideoDownloadParameter, Double> downloadProgressColumn;
+    @FXML
+    private TableColumn<VideoDownloadParameter, String> downloadSpeedColumn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -44,21 +63,16 @@ public class Controller implements Initializable {
         VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
         videoUrlInputDialog.setTitle("新建直播下载");
         videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
-        videoUrlInputDialog.showAndWait().ifPresent(new Consumer<String>() {
-
-            @Override
-            public void accept(String s) {
-                for (String split : s.split("\n")) {
-                    if (split.trim().isEmpty()) {
-                        continue;
-                    }
-
-                    addLiveStreamDownloadTask(split.trim());
-                    // just the first one is available
-                    break;
+        videoUrlInputDialog.showAndWait().ifPresent(s -> {
+            for (String split : s.split("\n")) {
+                if (split.trim().isEmpty()) {
+                    continue;
                 }
-            }
 
+                addLiveStreamDownloadTask(split.trim());
+                // just the first one is available
+                break;
+            }
         });
     }
 
@@ -74,47 +88,19 @@ public class Controller implements Initializable {
         downloadLooper.postTask(new DownloadTask(videoDownloadParameter, true));
     }
 
-    private class DownloadTask extends Task {
-
-        private final VideoDownloadParameter videoDownloadParameter;
-        private final boolean infinite;
-
-        DownloadTask(VideoDownloadParameter videoDownloadParameter, boolean infinite) {
-            super(MSG_DOWNLOAD, 0);
-            this.videoDownloadParameter = videoDownloadParameter;
-            this.infinite = infinite;
-        }
-
-        @Override
-        public void run() {
-            videoDownload.download(videoDownloadParameter, infinite);
-        }
-
-        @Override
-        public void cancel() {
-            videoDownload.cancel();
-        }
-
-    }
-
     @FXML
     private void onAddUrlClick() {
         VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
         videoUrlInputDialog.setTitle("新建下载");
         videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
-        videoUrlInputDialog.showAndWait().ifPresent(new Consumer<String>() {
-
-            @Override
-            public void accept(String s) {
-                for (String split : s.split("\n")) {
-                    if (split.trim().isEmpty()) {
-                        continue;
-                    }
-
-                    addDownloadTask(split.trim());
+        videoUrlInputDialog.showAndWait().ifPresent(s -> {
+            for (String split : s.split("\n")) {
+                if (split.trim().isEmpty()) {
+                    continue;
                 }
-            }
 
+                addDownloadTask(split.trim());
+            }
         });
     }
 
@@ -142,36 +128,27 @@ public class Controller implements Initializable {
         pathRecord.set(directory);
     }
 
-    private final PathRecord pathRecord = new PathRecord(getClass(), "download directory");
+    private class DownloadTask extends Task {
 
-    @FXML
-    private Label downloadDirectoryView;
+        private final VideoDownloadParameter videoDownloadParameter;
+        private final boolean infinite;
 
-    @FXML
-    private TableColumn<VideoDownloadParameter, String> videoTitleColumn;
+        DownloadTask(VideoDownloadParameter videoDownloadParameter, boolean infinite) {
+            super(MSG_DOWNLOAD, 0);
+            this.videoDownloadParameter = videoDownloadParameter;
+            this.infinite = infinite;
+        }
 
-    @FXML
-    private TableColumn<VideoDownloadParameter, String> videoProfileColumn;
+        @Override
+        public void run() {
+            videoDownload.download(videoDownloadParameter, infinite);
+        }
 
-    @FXML
-    private TableColumn<VideoDownloadParameter, File> downloadDirectoryColumn;
+        @Override
+        public void cancel() {
+            videoDownload.cancel();
+        }
 
-    @FXML
-    private TableView<VideoDownloadParameter> downloadList;
-
-    @FXML
-    private TableColumn<VideoDownloadParameter, String> downloadStatusColumn;
-
-    @FXML
-    private TableColumn<VideoDownloadParameter, Double> downloadProgressColumn;
-
-    @FXML
-    private TableColumn<VideoDownloadParameter, String> downloadSpeedColumn;
-
-    private final VideoDownload videoDownload = new VideoDownload();
-
-    private final Looper downloadLooper = new Looper();
-
-    private static final Object MSG_DOWNLOAD = new Object();
+    }
 
 }

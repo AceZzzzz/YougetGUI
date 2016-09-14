@@ -3,39 +3,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/8"
             fx:controller="com.getting.yougetgui.Controller">
     <bottom>
         <ToolBar BorderPane.alignment="CENTER">
-            <items>
-                <Button mnemonicParsing="false" onAction="#onSetDownloadDirectoryClick" text="设置下载目录"/>
-                <Label fx:id="downloadDirectoryView"/>
-            </items>
+            <Button mnemonicParsing="false" onAction="#onSetDownloadDirectoryClick" text="设置下载目录"/>
+            <Label fx:id="downloadDirectoryView"/>
         </ToolBar>
     </bottom>
 
     <top>
         <MenuBar BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="文件">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#onAddUrlClick" text="新建">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP"
-                                                    shift="UP"
-                                                    shortcut="UP"/>
-                            </accelerator>
-                        </MenuItem>
-                        <MenuItem mnemonicParsing="false" onAction="#onAddLiveStreamUrlClick" text="新建直播地址下载">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP"
-                                                    shift="UP"
-                                                    shortcut="UP"/>
-                            </accelerator>
-                        </MenuItem>
-                    </items>
-                </Menu>
-            </menus>
+            <Menu mnemonicParsing="false" text="文件">
+                <MenuItem mnemonicParsing="false" onAction="#onAddUrlClick" text="新建">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP"
+                                            shift="UP"
+                                            shortcut="UP"/>
+                    </accelerator>
+                </MenuItem>
+                <MenuItem mnemonicParsing="false" onAction="#onAddLiveStreamUrlClick" text="新建直播地址下载">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP"
+                                            shift="UP"
+                                            shortcut="UP"/>
+                    </accelerator>
+                </MenuItem>
+            </Menu>
         </MenuBar>
     </top>
 

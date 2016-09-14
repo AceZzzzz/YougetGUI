@@ -10,6 +10,19 @@ import java.util.List;
 
 public class VideoDownloadParameter implements Parameters {
 
+    private final StringProperty videoProfile = new SimpleStringProperty();
+    private final StringProperty url = new SimpleStringProperty();
+    private final StringProperty status = new SimpleStringProperty();
+    private final DoubleProperty progress = new SimpleDoubleProperty();
+    private final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
+    private final StringProperty title = new SimpleStringProperty();
+    private final StringProperty speed = new SimpleStringProperty();
+
+    public VideoDownloadParameter(String url, File downloadDirectory) {
+        this.url.set(url);
+        this.downloadDirectory.set(downloadDirectory);
+    }
+
     @Override
     public List<String> build() {
         List<String> command = new ArrayList<>();
@@ -25,20 +38,6 @@ public class VideoDownloadParameter implements Parameters {
         return downloadDirectory.get();
     }
 
-    private final StringProperty videoProfile = new SimpleStringProperty();
-
-    private final StringProperty url = new SimpleStringProperty();
-
-    private final StringProperty status = new SimpleStringProperty();
-
-    private final DoubleProperty progress = new SimpleDoubleProperty();
-
-    private final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
-
-    private final StringProperty title = new SimpleStringProperty();
-
-    private final StringProperty speed = new SimpleStringProperty();
-
     public String getSpeed() {
         return speed.get();
     }
@@ -47,29 +46,24 @@ public class VideoDownloadParameter implements Parameters {
         return speed;
     }
 
-    public VideoDownloadParameter(String url, File downloadDirectory) {
-        this.url.set(url);
-        this.downloadDirectory.set(downloadDirectory);
-    }
-
     public String getVideoProfile() {
         return videoProfile.get();
+    }
+
+    public void setVideoProfile(String videoProfile) {
+        this.videoProfile.set(videoProfile);
     }
 
     public double getProgress() {
         return progress.get();
     }
 
-    public DoubleProperty progressProperty() {
-        return progress;
-    }
-
     public void setProgress(double progress) {
         this.progress.set(progress);
     }
 
-    public void setVideoProfile(String videoProfile) {
-        this.videoProfile.set(videoProfile);
+    public DoubleProperty progressProperty() {
+        return progress;
     }
 
     public StringProperty videoProfileProperty() {
@@ -80,16 +74,12 @@ public class VideoDownloadParameter implements Parameters {
         return downloadDirectory.get();
     }
 
-    public void setStatus(String status) {
-        this.status.set(status);
+    public String getTitle() {
+        return title.get();
     }
 
     public void setTitle(String title) {
         this.title.set(title);
-    }
-
-    public String getTitle() {
-        return title.get();
     }
 
     public StringProperty titleProperty() {
@@ -110,6 +100,10 @@ public class VideoDownloadParameter implements Parameters {
 
     public String getStatus() {
         return status.get();
+    }
+
+    public void setStatus(String status) {
+        this.status.set(status);
     }
 
     public StringProperty statusProperty() {
