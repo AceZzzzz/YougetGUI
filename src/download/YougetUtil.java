@@ -21,7 +21,7 @@ public class YougetUtil {
         return null;
     }
 
-    public static String getVideoProfile(String message) {
+    public static String getVideoProfile(@NotNull String message) {
         Matcher matcher = YougetUtil.VIDEO_PROFILE_REGEX.matcher(message);
         if (matcher.matches()) {
             return matcher.group("videoprofile").trim();
@@ -30,7 +30,7 @@ public class YougetUtil {
         return null;
     }
 
-    public static String getSpeed(String message) {
+    public static String getSpeed(@NotNull String message) {
         Matcher matcher = YougetUtil.SPEED_REGEX.matcher(message);
         if (matcher.matches()) {
             return matcher.group("speed");
@@ -39,24 +39,24 @@ public class YougetUtil {
         return null;
     }
 
-    public static DownloadStatus getDownloadStatus(String message) {
+    public static DownloadProgress getDownloadProgress(@NotNull String message) {
         for (String split : message.split("[()]")) {
             Matcher matcher = YougetUtil.PROGRESS_REGEX.matcher(split);
             if (matcher.matches()) {
-                return new DownloadStatus(matcher.group("status"), Double.parseDouble(matcher.group("downloaded")), Double.parseDouble(matcher.group("total")));
+                return new DownloadProgress(matcher.group("status"), Double.parseDouble(matcher.group("downloaded")), Double.parseDouble(matcher.group("total")));
             }
         }
 
         return null;
     }
 
-    public static class DownloadStatus {
+    public static class DownloadProgress {
 
         public final String description;
         public final double downloaded;
         public final double total;
 
-        public DownloadStatus(String description, double downloaded, double total) {
+        public DownloadProgress(String description, double downloaded, double total) {
             this.description = description;
             this.downloaded = downloaded;
             this.total = total;

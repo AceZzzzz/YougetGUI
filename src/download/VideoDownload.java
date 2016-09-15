@@ -11,7 +11,6 @@ import javafx.beans.value.ChangeListener;
 
 public class VideoDownload extends Executor {
 
-    private static final long RESTART_DOWNLOAD_WAIT_TIME = 3 * 1000;
     private final StringProperty videoProfile = new SimpleStringProperty();
     private final StringProperty videoTitle = new SimpleStringProperty();
     private final DoubleProperty progress = new SimpleDoubleProperty();
@@ -62,7 +61,7 @@ public class VideoDownload extends Executor {
         Platform.runLater(() -> VideoDownload.this.speed.set(speed));
     }
 
-    public void download(VideoDownloadParameter videoDownloadParameter, boolean infinite) {
+    public void download(VideoDownloadParameter videoDownloadParameter) {
         updateDownloadDataOnUiThread(videoDownloadParameter);
 
         ChangeListener<String> listener = (observable, oldValue, newValue) -> {
@@ -80,39 +79,30 @@ public class VideoDownload extends Executor {
                 updateVideoProfileOnUiThread(videoProfile1);
             }
 
-            final YougetUtil.DownloadStatus downloadStatus = YougetUtil.getDownloadStatus(newValue);
-            if (downloadStatus != null) {
-                updateProgressStatusOnUiThread(downloadStatus.description);
-                updateProgressOnUiThread(downloadStatus.downloaded, downloadStatus.total);
+            final YougetUtil.DownloadProgress downloadProgress = YougetUtil.getDownloadProgress(newValue);
+            if (downloadProgress != null) {
+                updateProgressStatusOnUiThread(downloadProgress.description);
+                updateProgressOnUiThread(downloadProgress.downloaded / downloadProgress.total);
             }
 
-            final String speed1 = YougetUtil.getSpeed(newValue);
-            if (speed1 != null) {
-                updateSpeedOnUiThread(speed1);
+            final String speed = YougetUtil.getSpeed(newValue);
+            if (speed != null) {
+                updateSpeedOnUiThread(speed);
             }
         };
         executorOutputMessage.addListener(listener);
 
-        if (infinite) {
-            try {
-                while (true) {
-                    execute(videoDownloadParameter, false);
-                    Thread.sleep(RESTART_DOWNLOAD_WAIT_TIME);
-                    System.out.println("restart download");
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            execute(videoDownloadParameter, false);
-        }
+        execute(videoDownloadParameter, false);
 
-        updateSpeedOnUiThread("");
         executorOutputMessage.removeListener(listener);
+        updateSpeedOnUiThread("");
+        if (progress.get() == Double.NEGATIVE_INFINITY) {
+            updateProgressOnUiThread(0);
+        }
     }
 
-    private void updateProgressOnUiThread(double downloadedSize, double totalSize) {
-        Platform.runLater(() -> progress.set(downloadedSize / totalSize));
+    private void updateProgressOnUiThread(double progress) {
+        Platform.runLater(() -> this.progress.set(progress));
     }
 
     private void updateProgressStatusOnUiThread(String status) {

@@ -1,10 +1,9 @@
 package com.getting.yougetgui;
 
+import com.getting.util.AsyncTask;
 import com.getting.util.Looper;
 import com.getting.util.PathRecord;
-import com.getting.util.Task;
 import com.getting.util.binding.NullableObjectStringFormatter;
-import download.LiveStreamDownloadParameter;
 import download.VideoDownload;
 import download.VideoDownloadParameter;
 import javafx.application.Platform;
@@ -63,16 +62,6 @@ public class Controller implements Initializable {
         downloadDirectoryView.textProperty().bind(new NullableObjectStringFormatter<>(pathRecord.pathProperty()));
     }
 
-    @FXML
-    public void onAddLiveStreamUrlClick() {
-        addExitListener();
-
-        VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
-        videoUrlInputDialog.setTitle("新建直播下载");
-        videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
-        videoUrlInputDialog.showAndWait().ifPresent(s -> addLiveStreamDownloadTask(s.split("\n")));
-    }
-
     private void addDownloadTask(String[] urls) {
         for (String url : urls) {
             url = url.trim();
@@ -83,19 +72,6 @@ public class Controller implements Initializable {
             VideoDownloadParameter videoDownloadParameter = new VideoDownloadParameter(url, pathRecord.getPath());
             downloadList.getItems().add(videoDownloadParameter);
             downloadLooper.postTask(new DownloadTask(videoDownloadParameter, false));
-        }
-    }
-
-    private void addLiveStreamDownloadTask(String[] urls) {
-        for (String url : urls) {
-            url = url.trim();
-            if (url.isEmpty()) {
-                continue;
-            }
-
-            LiveStreamDownloadParameter videoDownloadParameter = new LiveStreamDownloadParameter(url, pathRecord.getPath());
-            downloadList.getItems().add(videoDownloadParameter);
-            downloadLooper.postTask(new DownloadTask(videoDownloadParameter, true));
         }
     }
 
@@ -150,20 +126,24 @@ public class Controller implements Initializable {
         pathRecord.set(directory);
     }
 
-    private class DownloadTask extends Task {
+    private class DownloadTask extends AsyncTask<Void> {
 
         private final VideoDownloadParameter videoDownloadParameter;
-        private final boolean infinite;
 
         DownloadTask(VideoDownloadParameter videoDownloadParameter, boolean infinite) {
             super(MSG_DOWNLOAD, 0);
             this.videoDownloadParameter = videoDownloadParameter;
-            this.infinite = infinite;
         }
 
         @Override
-        public void run() {
-            videoDownload.download(videoDownloadParameter, infinite);
+        public Void runTask() {
+            videoDownload.download(videoDownloadParameter);
+            return null;
+        }
+
+        @Override
+        public void preTaskOnUi() {
+            downloadList.scrollTo(videoDownloadParameter);
         }
 
         @Override
