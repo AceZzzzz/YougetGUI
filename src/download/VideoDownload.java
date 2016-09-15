@@ -119,4 +119,16 @@ public class VideoDownload extends Executor {
         Platform.runLater(() -> VideoDownload.this.progressStatus.set(status.trim()));
     }
 
+    @Override
+    public void cancel() {
+        super.cancel();
+        new Thread() {
+
+            @Override
+            public void run() {
+                forceCancel();
+            }
+
+        }.start();
+    }
 }

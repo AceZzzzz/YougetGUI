@@ -20,6 +20,7 @@ public class VideoDownloadParameter implements Parameters {
 
     public VideoDownloadParameter(String url, File downloadDirectory) {
         this.url.set(url);
+        this.title.set(url);
         this.downloadDirectory.set(downloadDirectory);
     }
 
