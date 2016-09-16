@@ -13,6 +13,7 @@ public class VideoUrlInputDialog extends Dialog<String> {
     {
         textArea.setPrefColumnCount(40);
         textArea.setPrefRowCount(10);
+        textArea.setWrapText(true);
         textArea.setPromptText("多个下载链接用回车分割");
     }
 
