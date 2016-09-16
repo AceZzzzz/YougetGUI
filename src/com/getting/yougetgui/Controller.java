@@ -73,6 +73,8 @@ public class Controller implements Initializable {
             downloadList.getItems().add(videoDownloadParameter);
             downloadLooper.postTask(new DownloadTask(videoDownloadParameter, false));
         }
+
+        downloadList.getSelectionModel().selectLast();
     }
 
     private void addExitListener() {
@@ -118,6 +120,9 @@ public class Controller implements Initializable {
     @FXML
     private void onSetDownloadDirectoryClick() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
+        if (pathRecord.getPath().isDirectory()) {
+            directoryChooser.setInitialDirectory(pathRecord.getPath());
+        }
         File directory = directoryChooser.showDialog(downloadList.getScene().getWindow());
         if (directory == null) {
             return;
