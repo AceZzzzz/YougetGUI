@@ -33,6 +33,8 @@ public class Controller implements Initializable {
     @FXML
     public NotificationPane notification;
     @FXML
+    public Label downloadSpeedView;
+    @FXML
     private Label downloadDirectoryView;
     @FXML
     private TableColumn<VideoDownloadParameter, String> videoTitleColumn;
@@ -46,8 +48,6 @@ public class Controller implements Initializable {
     private TableColumn<VideoDownloadParameter, String> downloadStatusColumn;
     @FXML
     private TableColumn<VideoDownloadParameter, Double> downloadProgressColumn;
-    @FXML
-    private TableColumn<VideoDownloadParameter, String> downloadSpeedColumn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -56,10 +56,10 @@ public class Controller implements Initializable {
         downloadProgressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
         downloadProgressColumn.setCellFactory(ProgressBarTableCell.forTableColumn());
         downloadDirectoryColumn.setCellValueFactory(new PropertyValueFactory<>("downloadDirectory"));
-        downloadSpeedColumn.setCellValueFactory(new PropertyValueFactory<>("speed"));
         videoTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
         downloadDirectoryView.textProperty().bind(new NullableObjectStringFormatter<>(pathRecord.pathProperty()));
+        downloadSpeedView.textProperty().bind(videoDownload.speedProperty());
     }
 
     private void addDownloadTask(String[] urls) {

@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.input.KeyCodeCombination?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.*?>
 <?import org.controlsfx.control.NotificationPane?>
 <NotificationPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="500" prefWidth="800"
                   xmlns="http://javafx.com/javafx/8"
@@ -14,6 +14,8 @@
                 <ToolBar BorderPane.alignment="CENTER">
                     <Button mnemonicParsing="false" onAction="#onSetDownloadDirectoryClick" text="设置下载目录"/>
                     <Label fx:id="downloadDirectoryView"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="downloadSpeedView"/>
                 </ToolBar>
             </bottom>
 
@@ -40,8 +42,6 @@
                         <TableColumn fx:id="downloadStatusColumn" maxWidth="120" minWidth="120" text="状态"
                                      sortable="false"/>
                         <TableColumn fx:id="downloadProgressColumn" maxWidth="80" minWidth="80" text="进度"
-                                     sortable="false"/>
-                        <TableColumn fx:id="downloadSpeedColumn" maxWidth="80" minWidth="80" text="速度"
                                      sortable="false"/>
                         <TableColumn fx:id="downloadDirectoryColumn" maxWidth="80" minWidth="80" text="下载位置"
                                      sortable="false"/>

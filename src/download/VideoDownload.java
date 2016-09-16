@@ -22,6 +22,14 @@ public class VideoDownload extends Executor {
         super(VideoDownload.class, "you-get-0.4.523-win32.exe");
     }
 
+    public String getSpeed() {
+        return speed.get();
+    }
+
+    public StringProperty speedProperty() {
+        return speed;
+    }
+
     private void updateVideoProfileOnUiThread(@NotNull String profile) {
         Platform.runLater(() -> videoProfile.set(profile));
     }
@@ -36,12 +44,10 @@ public class VideoDownload extends Executor {
             this.videoDownloadParameter.statusProperty().unbind();
             this.videoDownloadParameter.titleProperty().unbind();
             this.videoDownloadParameter.videoProfileProperty().unbind();
-            this.videoDownloadParameter.speedProperty().unbind();
         }
 
         videoTitle.set(videoDownloadParameter.getTitle());
         videoProfile.set(videoDownloadParameter.getVideoProfile());
-        speed.set("");
         progress.set(Double.NEGATIVE_INFINITY);
         progressStatus.set("");
 
@@ -50,7 +56,6 @@ public class VideoDownload extends Executor {
         videoDownloadParameter.statusProperty().bind(progressStatus);
         videoDownloadParameter.titleProperty().bind(videoTitle);
         videoDownloadParameter.videoProfileProperty().bind(videoProfile);
-        videoDownloadParameter.speedProperty().bind(speed);
     }
 
     private void updateDownloadDataOnUiThread(@NotNull VideoDownloadParameter videoDownloadParameter) {
@@ -121,4 +126,5 @@ public class VideoDownload extends Executor {
 
         }.start();
     }
+
 }

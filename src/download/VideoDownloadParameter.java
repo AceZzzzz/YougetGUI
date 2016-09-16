@@ -16,7 +16,6 @@ public class VideoDownloadParameter implements Parameters {
     private final DoubleProperty progress = new SimpleDoubleProperty();
     private final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
     private final StringProperty title = new SimpleStringProperty();
-    private final StringProperty speed = new SimpleStringProperty();
 
     public VideoDownloadParameter(String url, File downloadDirectory) {
         this.url.set(url);
@@ -37,14 +36,6 @@ public class VideoDownloadParameter implements Parameters {
     @Override
     public File getOutputDirectory() {
         return downloadDirectory.get();
-    }
-
-    public String getSpeed() {
-        return speed.get();
-    }
-
-    public StringProperty speedProperty() {
-        return speed;
     }
 
     public String getVideoProfile() {
