@@ -3,12 +3,12 @@ package download;
 import com.getting.util.executor.Parameters;
 import javafx.beans.property.*;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class VideoDownloadParameter implements Parameters {
+public class VideoDownloadParameter implements Parameters, Externalizable {
 
     private final StringProperty videoProfile = new SimpleStringProperty();
     private final StringProperty url = new SimpleStringProperty();
@@ -21,6 +21,9 @@ public class VideoDownloadParameter implements Parameters {
         this.url.set(url);
         this.title.set(url);
         this.downloadDirectory.set(downloadDirectory);
+    }
+
+    public VideoDownloadParameter() {
     }
 
     @Override
@@ -100,6 +103,24 @@ public class VideoDownloadParameter implements Parameters {
 
     public StringProperty statusProperty() {
         return status;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(url.get());
+        out.writeObject(title.get());
+        out.writeObject(downloadDirectory.get());
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException {
+        try {
+            url.set((String) in.readObject());
+            title.set((String) in.readObject());
+            downloadDirectory.set((File) in.readObject());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 }
