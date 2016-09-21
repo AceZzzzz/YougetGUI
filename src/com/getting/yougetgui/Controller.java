@@ -65,6 +65,14 @@ public class Controller implements Initializable {
         downloadSpeedView.textProperty().bind(videoDownload.speedProperty());
 
         downloadHistoryLooper.postTask(new ReadDownloadHistoryTask());
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                addExitListener();
+            }
+
+        });
     }
 
     private void addDownloadTask(@NotNull String[] urls) {
@@ -85,13 +93,17 @@ public class Controller implements Initializable {
         for (VideoDownloadParameter param : params) {
             downloadList.getItems().add(param);
             downloadLooper.postTask(new DownloadTask(param));
+            downloadLooper.postTask(new WriteHistoryTask());
         }
 
+        downloadList.requestFocus();
         downloadList.getSelectionModel().selectLast();
     }
 
     private void addExitListener() {
         downloadList.getScene().getWindow().setOnCloseRequest(event -> {
+            downloadHistoryLooper.postTask(new WriteHistoryTask());
+
             if (downloadLooper.isAllDone()) {
                 return;
             }
@@ -109,15 +121,10 @@ public class Controller implements Initializable {
 
     @FXML
     private void onAddUrlClick() {
-        addExitListener();
-
         VideoUrlInputDialog videoUrlInputDialog = new VideoUrlInputDialog();
         videoUrlInputDialog.setTitle("新建下载");
         videoUrlInputDialog.initOwner(downloadList.getScene().getWindow());
-        videoUrlInputDialog.showAndWait().ifPresent(s -> {
-            addDownloadTask(s.split("\n"));
-            downloadHistoryLooper.postTask(new WriteHistoryTask());
-        });
+        videoUrlInputDialog.showAndWait().ifPresent(s -> addDownloadTask(s.split("\n")));
     }
 
     @FXML

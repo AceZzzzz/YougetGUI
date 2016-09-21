@@ -106,19 +106,23 @@ public class VideoDownloadParameter implements Parameters, Externalizable {
     }
 
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(url.get());
-        out.writeObject(title.get());
-        out.writeObject(downloadDirectory.get());
+    public void writeExternal(ObjectOutput out) {
+        try {
+            out.writeObject(url.get());
+            out.writeObject(title.get());
+            out.writeObject(downloadDirectory.get());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException {
+    public void readExternal(ObjectInput in) {
         try {
             url.set((String) in.readObject());
             title.set((String) in.readObject());
             downloadDirectory.set((File) in.readObject());
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
     }

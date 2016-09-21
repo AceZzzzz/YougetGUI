@@ -15,7 +15,7 @@
                     <Button mnemonicParsing="false" onAction="#onSetDownloadDirectoryClick" text="设置下载目录"/>
                     <Label fx:id="downloadDirectoryView"/>
                     <Pane HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="downloadSpeedView"/>
+                    <Label fx:id="downloadSpeedView" textFill="aqua"/>
                 </ToolBar>
             </bottom>
 
