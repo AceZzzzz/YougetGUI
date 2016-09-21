@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.control.NotificationPane?>
 <NotificationPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="500" prefWidth="800"
@@ -22,12 +21,7 @@
             <top>
                 <MenuBar BorderPane.alignment="CENTER">
                     <Menu mnemonicParsing="false" text="文件">
-                        <MenuItem mnemonicParsing="false" onAction="#onAddUrlClick" text="新建">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP"
-                                                    shift="UP"
-                                                    shortcut="UP"/>
-                            </accelerator>
+                        <MenuItem mnemonicParsing="false" onAction="#onClear" text="清空">
                         </MenuItem>
                     </Menu>
                 </MenuBar>
@@ -57,7 +51,6 @@
                                 <MenuItem mnemonicParsing="false" text="打开所在目录"
                                           onAction="#onOpenDownloadDirectoryClick"/>
                                 <MenuItem mnemonicParsing="false" text="新建" onAction="#onAddUrlClick"/>
-                                <MenuItem mnemonicParsing="false" text="清空" onAction="#onClear"/>
                             </items>
                         </ContextMenu>
                     </contextMenu>
