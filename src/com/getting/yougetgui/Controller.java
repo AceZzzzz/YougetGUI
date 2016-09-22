@@ -24,6 +24,8 @@ import view.VideoUrlInputDialog;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -34,9 +36,9 @@ public class Controller implements Initializable {
     private final Looper downloadLooper = new Looper();
     private final Looper downloadHistoryLooper = new Looper();
     @FXML
-    public NotificationPane notification;
+    private NotificationPane notification;
     @FXML
-    public Label downloadSpeedView;
+    private Label downloadSpeedView;
     @FXML
     private Label downloadDirectoryView;
     @FXML
@@ -65,14 +67,7 @@ public class Controller implements Initializable {
         downloadSpeedView.textProperty().bind(videoDownload.speedProperty());
 
         downloadHistoryLooper.postTask(new ReadDownloadHistoryTask());
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                addExitListener();
-            }
-
-        });
+        Platform.runLater(this::addExitListener);
     }
 
     private void addDownloadTask(@NotNull String[] urls) {
@@ -89,11 +84,11 @@ public class Controller implements Initializable {
         addDownloadTask(params);
     }
 
-    private void addDownloadTask(@NotNull ArrayList<VideoDownloadParameter> params) {
+    private void addDownloadTask(@NotNull List<VideoDownloadParameter> params) {
         for (VideoDownloadParameter param : params) {
             downloadList.getItems().add(param);
             downloadLooper.postTask(new DownloadTask(param));
-            downloadLooper.postTask(new WriteHistoryTask());
+            downloadLooper.postTask(new SaveDownloadHistoryTask());
         }
 
         downloadList.requestFocus();
@@ -102,7 +97,7 @@ public class Controller implements Initializable {
 
     private void addExitListener() {
         downloadList.getScene().getWindow().setOnCloseRequest(event -> {
-            downloadHistoryLooper.postTask(new WriteHistoryTask());
+            downloadHistoryLooper.postTask(new SaveDownloadHistoryTask());
 
             if (downloadLooper.isAllDone()) {
                 return;
@@ -158,49 +153,51 @@ public class Controller implements Initializable {
     private void onClear() {
         downloadList.getItems().clear();
         downloadLooper.removeAllTasks();
-        downloadHistoryLooper.postTask(new WriteHistoryTask());
+        downloadHistoryLooper.postTask(new SaveDownloadHistoryTask());
     }
 
-    private class ReadDownloadHistoryTask extends AsyncTask<ArrayList<VideoDownloadParameter>> {
+    private class ReadDownloadHistoryTask extends AsyncTask<VideoDownloadParameter[]> {
 
         public ReadDownloadHistoryTask() {
             super(null, 0);
         }
 
         @Override
-        public ArrayList<VideoDownloadParameter> runTask() {
+        public VideoDownloadParameter[] runTask() {
             if (!DOWNLOAD_HISTORY_FILE.exists()) {
-                return new ArrayList<>();
+                return new VideoDownloadParameter[0];
             }
 
             try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(DOWNLOAD_HISTORY_FILE))) {
-                return (ArrayList<VideoDownloadParameter>) inputStream.readObject();
+                Object data = inputStream.readObject();
+                if (data instanceof VideoDownloadParameter[]) {
+                    return (VideoDownloadParameter[]) data;
+                }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
 
-            return new ArrayList<>();
+
+            return new VideoDownloadParameter[0];
         }
 
         @Override
-        public void postTaskOnUi(ArrayList<VideoDownloadParameter> result) {
-            addDownloadTask(result);
+        public void postTaskOnUi(VideoDownloadParameter[] result) {
+            addDownloadTask(Arrays.asList(result));
         }
 
     }
 
-    private class WriteHistoryTask extends Task {
+    private class SaveDownloadHistoryTask extends Task {
 
-        public WriteHistoryTask() {
+        public SaveDownloadHistoryTask() {
             super(null, 0);
         }
 
         @Override
         public void run() {
             try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(DOWNLOAD_HISTORY_FILE))) {
-                ArrayList<VideoDownloadParameter> parameters = new ArrayList<>();
-                parameters.addAll(downloadList.getItems());
-                outputStream.writeObject(parameters);
+                outputStream.writeObject(downloadList.getItems().toArray(new VideoDownloadParameter[0]));
             } catch (IOException e) {
                 e.printStackTrace();
             }
