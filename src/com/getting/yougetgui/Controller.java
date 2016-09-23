@@ -16,9 +16,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.DataFormat;
 import javafx.stage.DirectoryChooser;
 import org.controlsfx.control.NotificationPane;
 import org.controlsfx.control.action.Action;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import view.VideoUrlInputDialog;
 
 import java.io.*;
@@ -29,6 +33,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Controller.class);
 
     private static final File DOWNLOAD_HISTORY_FILE = new File(System.getProperty("java.io.tmpdir"), "youget.history");
     private final PathRecord pathRecord = new PathRecord(getClass(), "download directory");
@@ -154,6 +160,20 @@ public class Controller implements Initializable {
         downloadList.getItems().clear();
         downloadLooper.removeAllTasks();
         downloadHistoryLooper.postTask(new SaveDownloadHistoryTask());
+    }
+
+    @FXML
+    private void onAddUrlFromClipboardClick() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        LOGGER.info("onAddUrlFromClipboardClick");
+        for (DataFormat dataFormat : clipboard.getContentTypes()) {
+            LOGGER.info(dataFormat.toString());
+        }
+
+        if (clipboard.hasString()) {
+            LOGGER.info(clipboard.getString());
+            addDownloadTask(clipboard.getString().split("\n"));
+        }
     }
 
     private class ReadDownloadHistoryTask extends AsyncTask<VideoDownloadParameter[]> {

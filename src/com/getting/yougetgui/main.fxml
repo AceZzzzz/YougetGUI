@@ -51,6 +51,7 @@
                                 <MenuItem mnemonicParsing="false" text="打开所在目录"
                                           onAction="#onOpenDownloadDirectoryClick"/>
                                 <MenuItem mnemonicParsing="false" text="新建" onAction="#onAddUrlClick"/>
+                                <MenuItem mnemonicParsing="false" text="从剪切板新建" onAction="#onAddUrlFromClipboardClick"/>
                             </items>
                         </ContextMenu>
                     </contextMenu>
