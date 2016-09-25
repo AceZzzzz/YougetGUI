@@ -101,9 +101,7 @@ public class VideoDownload extends Executor {
 
         executorOutputMessage.removeListener(listener);
         updateSpeedOnUiThread("");
-        if (progress.get() == Double.NEGATIVE_INFINITY) {
-            updateProgressOnUiThread(0);
-        }
+        updateProgressOnUiThread(1);
     }
 
     private void updateProgressOnUiThread(double progress) {
