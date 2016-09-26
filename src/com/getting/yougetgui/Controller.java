@@ -166,10 +166,6 @@ public class Controller implements Initializable {
     private void onAddUrlFromClipboardClick() {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         LOGGER.info("onAddUrlFromClipboardClick");
-        for (DataFormat dataFormat : clipboard.getContentTypes()) {
-            LOGGER.info(dataFormat.toString());
-        }
-
         if (clipboard.hasString()) {
             LOGGER.info(clipboard.getString());
             addDownloadTask(clipboard.getString().split("\n"));
