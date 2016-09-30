@@ -17,7 +17,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
-import javafx.scene.input.DataFormat;
 import javafx.stage.DirectoryChooser;
 import org.controlsfx.control.NotificationPane;
 import org.controlsfx.control.action.Action;
@@ -172,6 +171,17 @@ public class Controller implements Initializable {
         }
     }
 
+    @FXML
+    private void onRemoveClick() {
+        if (downloadList.getSelectionModel().isEmpty()) {
+            return;
+        }
+
+        VideoDownloadParameter taskNeedRemove = downloadList.getSelectionModel().getSelectedItem();
+        downloadLooper.removeTask(taskNeedRemove);
+        downloadList.getItems().remove(taskNeedRemove);
+    }
+
     private class ReadDownloadHistoryTask extends AsyncTask<VideoDownloadParameter[]> {
 
         public ReadDownloadHistoryTask() {
@@ -225,8 +235,8 @@ public class Controller implements Initializable {
 
         private final VideoDownloadParameter videoDownloadParameter;
 
-        DownloadTask(VideoDownloadParameter videoDownloadParameter) {
-            super(null, 0);
+        public DownloadTask(VideoDownloadParameter videoDownloadParameter) {
+            super(videoDownloadParameter, 0);
             this.videoDownloadParameter = videoDownloadParameter;
         }
 

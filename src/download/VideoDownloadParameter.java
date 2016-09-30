@@ -1,6 +1,6 @@
 package download;
 
-import com.getting.util.executor.Parameters;
+import com.getting.util.executor.ParametersImp;
 import javafx.beans.property.*;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class VideoDownloadParameter implements Parameters, Externalizable {
+public class VideoDownloadParameter extends ParametersImp implements Externalizable {
 
     private final StringProperty videoProfile = new SimpleStringProperty();
     private final StringProperty url = new SimpleStringProperty();
