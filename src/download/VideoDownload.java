@@ -59,9 +59,9 @@ public class VideoDownload extends Executor {
                 updateTitleOnUiThread(title);
             }
 
-            final String videoProfile1 = YougetUtil.getVideoProfile(newValue);
-            if (videoProfile1 != null) {
-                updateVideoProfileOnUiThread(videoProfile1);
+            final String videoProfile = YougetUtil.getVideoProfile(newValue);
+            if (videoProfile != null) {
+                updateVideoProfileOnUiThread(videoProfile);
             }
 
             final YougetUtil.DownloadProgress downloadProgress = YougetUtil.getDownloadProgress(newValue);
@@ -70,10 +70,7 @@ public class VideoDownload extends Executor {
                 updateProgressOnUiThread(downloadProgress.downloaded / downloadProgress.total);
             }
 
-            final String speed = YougetUtil.getSpeed(newValue);
-            if (speed != null) {
-                updateSpeedOnUiThread(speed);
-            }
+            updateSpeedOnUiThread(YougetUtil.getSpeed(newValue));
         };
         executorOutputMessage.addListener(listener);
 
