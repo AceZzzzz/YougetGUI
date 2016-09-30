@@ -2,6 +2,8 @@ package download;
 
 import com.getting.util.executor.ParametersImp;
 import javafx.beans.property.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.List;
 
 
 public class VideoDownloadParameter extends ParametersImp implements Externalizable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VideoDownloadParameter.class);
 
     private final StringProperty videoProfile = new SimpleStringProperty();
     private final StringProperty url = new SimpleStringProperty();
@@ -112,7 +116,7 @@ public class VideoDownloadParameter extends ParametersImp implements Externaliza
             out.writeObject(title.get());
             out.writeObject(downloadDirectory.get());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("writeExternal", e);
         }
     }
 
@@ -123,7 +127,7 @@ public class VideoDownloadParameter extends ParametersImp implements Externaliza
             title.set((String) in.readObject());
             downloadDirectory.set((File) in.readObject());
         } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
+            LOGGER.error("readExternal", e);
         }
     }
 
