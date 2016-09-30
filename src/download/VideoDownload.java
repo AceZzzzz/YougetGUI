@@ -3,20 +3,14 @@ package download;
 import com.getting.util.executor.Executor;
 import com.sun.istack.internal.NotNull;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 
 public class VideoDownload extends Executor {
 
-    private final StringProperty videoProfile = new SimpleStringProperty();
-    private final StringProperty videoTitle = new SimpleStringProperty();
-    private final DoubleProperty progress = new SimpleDoubleProperty();
-    private final StringProperty progressStatus = new SimpleStringProperty();
     private final StringProperty speed = new SimpleStringProperty();
-    private VideoDownloadParameter videoDownloadParameter;
+    private VideoDownloadParameter videoDownloadParameter = new VideoDownloadParameter();
 
     public VideoDownload() {
         super(VideoDownload.class, "you-get-0.4.523-win32.exe");
@@ -31,31 +25,17 @@ public class VideoDownload extends Executor {
     }
 
     private void updateVideoProfileOnUiThread(@NotNull String profile) {
-        Platform.runLater(() -> videoProfile.set(profile));
+        Platform.runLater(() -> videoDownloadParameter.setVideoProfile(profile));
     }
 
     private void updateTitleOnUiThread(@NotNull String title) {
-        Platform.runLater(() -> videoTitle.set(title));
+        Platform.runLater(() -> videoDownloadParameter.setTitle(title));
     }
 
     private void bind(@NotNull VideoDownloadParameter videoDownloadParameter) {
-        if (this.videoDownloadParameter != null) {
-            this.videoDownloadParameter.progressProperty().unbind();
-            this.videoDownloadParameter.statusProperty().unbind();
-            this.videoDownloadParameter.titleProperty().unbind();
-            this.videoDownloadParameter.videoProfileProperty().unbind();
-        }
-
-        videoTitle.set(videoDownloadParameter.getTitle());
-        videoProfile.set(videoDownloadParameter.getVideoProfile());
-        progress.set(Double.NEGATIVE_INFINITY);
-        progressStatus.set("");
-
         this.videoDownloadParameter = videoDownloadParameter;
-        videoDownloadParameter.progressProperty().bind(progress);
-        videoDownloadParameter.statusProperty().bind(progressStatus);
-        videoDownloadParameter.titleProperty().bind(videoTitle);
-        videoDownloadParameter.videoProfileProperty().bind(videoProfile);
+        videoDownloadParameter.setProgress(Double.NEGATIVE_INFINITY);
+        videoDownloadParameter.setStatus("");
     }
 
     private void updateDownloadDataOnUiThread(@NotNull VideoDownloadParameter videoDownloadParameter) {
@@ -105,11 +85,11 @@ public class VideoDownload extends Executor {
     }
 
     private void updateProgressOnUiThread(double progress) {
-        Platform.runLater(() -> this.progress.set(progress));
+        Platform.runLater(() -> videoDownloadParameter.setProgress(progress));
     }
 
     private void updateProgressStatusOnUiThread(String status) {
-        Platform.runLater(() -> VideoDownload.this.progressStatus.set(status.trim()));
+        Platform.runLater(() -> videoDownloadParameter.setStatus(status.trim()));
     }
 
     @Override
