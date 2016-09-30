@@ -22,7 +22,12 @@
             <top>
                 <MenuBar BorderPane.alignment="CENTER">
                     <Menu mnemonicParsing="false" text="文件">
-                        <MenuItem mnemonicParsing="false" onAction="#onClear" text="清空">
+                        <MenuItem onAction="#onAddUrlClick" text="新建任务">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP"
+                                                    shift="UP"
+                                                    shortcut="UP"/>
+                            </accelerator>
                         </MenuItem>
                         <MenuItem onAction="#onAddUrlFromClipboardClick" text="从剪切板新建">
                             <accelerator>
@@ -31,8 +36,9 @@
                                                     shortcut="UP"/>
                             </accelerator>
                         </MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#onClear" text="清空">
+                        </MenuItem>
                     </Menu>
-
                 </MenuBar>
             </top>
 
