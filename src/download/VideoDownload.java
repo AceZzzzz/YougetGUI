@@ -13,7 +13,7 @@ public class VideoDownload extends Executor {
     private VideoDownloadParameter videoDownloadParameter = new VideoDownloadParameter();
 
     public VideoDownload() {
-        super(VideoDownload.class, "you-get-0.4.523-win32.exe");
+        super(VideoDownload.class, "you-get-0.4.575-win32.exe");
     }
 
     public String getSpeed() {
