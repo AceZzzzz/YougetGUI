@@ -1,6 +1,6 @@
 package download;
 
-import com.getting.util.executor.ParametersImp;
+import com.getting.util.executor.Parameters;
 import javafx.beans.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class VideoDownloadParameter extends ParametersImp implements Externalizable {
+public class VideoDownloadParameter extends Parameters implements Externalizable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoDownloadParameter.class);
 

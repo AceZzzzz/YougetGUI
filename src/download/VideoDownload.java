@@ -1,11 +1,10 @@
 package download;
 
 import com.getting.util.executor.Executor;
-import com.sun.istack.internal.NotNull;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
+import org.jetbrains.annotations.NotNull;
 
 public class VideoDownload extends Executor {
 
@@ -14,6 +13,29 @@ public class VideoDownload extends Executor {
 
     public VideoDownload() {
         super(VideoDownload.class, "you-get-0.4.575-win32.exe");
+        executorOutputMessage.addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+
+            final String title = YougetUtil.getTitle(newValue);
+            if (title != null) {
+                updateTitleOnUiThread(title);
+            }
+
+            final String videoProfile = YougetUtil.getVideoProfile(newValue);
+            if (videoProfile != null) {
+                updateVideoProfileOnUiThread(videoProfile);
+            }
+
+            final YougetUtil.DownloadProgress downloadProgress = YougetUtil.getDownloadProgress(newValue);
+            if (downloadProgress != null) {
+                updateProgressStatusOnUiThread(downloadProgress.description);
+                updateProgressOnUiThread(downloadProgress.downloaded / downloadProgress.total);
+            }
+
+            updateSpeedOnUiThread(YougetUtil.getSpeed(newValue));
+        });
     }
 
     public String getSpeed() {
@@ -48,35 +70,7 @@ public class VideoDownload extends Executor {
 
     public void download(VideoDownloadParameter videoDownloadParameter) {
         updateDownloadDataOnUiThread(videoDownloadParameter);
-
-        ChangeListener<String> listener = (observable, oldValue, newValue) -> {
-            if (newValue == null) {
-                return;
-            }
-
-            final String title = YougetUtil.getTitle(newValue);
-            if (title != null) {
-                updateTitleOnUiThread(title);
-            }
-
-            final String videoProfile = YougetUtil.getVideoProfile(newValue);
-            if (videoProfile != null) {
-                updateVideoProfileOnUiThread(videoProfile);
-            }
-
-            final YougetUtil.DownloadProgress downloadProgress = YougetUtil.getDownloadProgress(newValue);
-            if (downloadProgress != null) {
-                updateProgressStatusOnUiThread(downloadProgress.description);
-                updateProgressOnUiThread(downloadProgress.downloaded / downloadProgress.total);
-            }
-
-            updateSpeedOnUiThread(YougetUtil.getSpeed(newValue));
-        };
-        executorOutputMessage.addListener(listener);
-
         execute(videoDownloadParameter, false);
-
-        executorOutputMessage.removeListener(listener);
         updateSpeedOnUiThread("");
         updateProgressOnUiThread(1);
     }
