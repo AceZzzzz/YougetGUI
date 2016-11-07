@@ -54,14 +54,12 @@ public class VideoDownload extends Executor {
         Platform.runLater(() -> videoDownloadParameter.setTitle(title));
     }
 
-    private void bind(@NotNull VideoDownloadParameter videoDownloadParameter) {
-        this.videoDownloadParameter = videoDownloadParameter;
-        videoDownloadParameter.setProgress(Double.NEGATIVE_INFINITY);
-        videoDownloadParameter.setStatus("");
-    }
-
     private void updateDownloadDataOnUiThread(@NotNull VideoDownloadParameter videoDownloadParameter) {
-        Platform.runLater(() -> bind(videoDownloadParameter));
+        Platform.runLater(() -> {
+            this.videoDownloadParameter = videoDownloadParameter;
+            videoDownloadParameter.setProgress(Double.NEGATIVE_INFINITY);
+            videoDownloadParameter.setStatus("");
+        });
     }
 
     private void updateSpeedOnUiThread(String speed) {
