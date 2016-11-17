@@ -1,7 +1,8 @@
 package download;
 
-import com.getting.util.executor.Parameters;
+import com.getting.util.executor.ExecuteTask;
 import javafx.beans.property.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class VideoDownloadParameter extends Parameters implements Externalizable {
+public class VideoDownloadTask extends ExecuteTask implements Externalizable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VideoDownloadParameter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VideoDownloadTask.class);
 
     private final StringProperty videoProfile = new SimpleStringProperty();
     private final StringProperty url = new SimpleStringProperty();
@@ -21,17 +22,18 @@ public class VideoDownloadParameter extends Parameters implements Externalizable
     private final ObjectProperty<File> downloadDirectory = new SimpleObjectProperty<>();
     private final StringProperty title = new SimpleStringProperty();
 
-    public VideoDownloadParameter(String url, File downloadDirectory) {
+    public VideoDownloadTask(String url, File downloadDirectory) {
         this.url.set(url);
         this.title.set(url);
         this.downloadDirectory.set(downloadDirectory);
     }
 
-    public VideoDownloadParameter() {
+    public VideoDownloadTask() {
     }
 
+    @NotNull
     @Override
-    public List<String> build() {
+    public List<String> buildParameters() {
         List<String> command = new ArrayList<>();
         command.add("-d");
         command.add("-o");
@@ -61,10 +63,12 @@ public class VideoDownloadParameter extends Parameters implements Externalizable
         this.progress.set(progress);
     }
 
+    @NotNull
     public DoubleProperty progressProperty() {
         return progress;
     }
 
+    @NotNull
     public StringProperty videoProfileProperty() {
         return videoProfile;
     }
@@ -81,10 +85,12 @@ public class VideoDownloadParameter extends Parameters implements Externalizable
         this.title.set(title);
     }
 
+    @NotNull
     public StringProperty titleProperty() {
         return title;
     }
 
+    @NotNull
     public ObjectProperty<File> downloadDirectoryProperty() {
         return downloadDirectory;
     }
@@ -93,6 +99,7 @@ public class VideoDownloadParameter extends Parameters implements Externalizable
         return url.get();
     }
 
+    @NotNull
     public StringProperty urlProperty() {
         return url;
     }
@@ -105,12 +112,13 @@ public class VideoDownloadParameter extends Parameters implements Externalizable
         this.status.set(status);
     }
 
+    @NotNull
     public StringProperty statusProperty() {
         return status;
     }
 
     @Override
-    public void writeExternal(ObjectOutput out) {
+    public void writeExternal(@NotNull ObjectOutput out) {
         try {
             out.writeObject(url.get());
             out.writeObject(title.get());
@@ -121,12 +129,12 @@ public class VideoDownloadParameter extends Parameters implements Externalizable
     }
 
     @Override
-    public void readExternal(ObjectInput in) {
+    public void readExternal(@NotNull ObjectInput in) {
         try {
             url.set((String) in.readObject());
             title.set((String) in.readObject());
             downloadDirectory.set((File) in.readObject());
-        } catch (ClassNotFoundException | IOException e) {
+        } catch (@NotNull ClassNotFoundException | IOException e) {
             LOGGER.error("readExternal", e);
         }
     }

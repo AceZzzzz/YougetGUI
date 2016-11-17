@@ -6,7 +6,7 @@ import com.getting.util.PathRecord;
 import com.getting.util.Task;
 import com.getting.util.binding.NullableObjectStringFormatter;
 import download.VideoDownload;
-import download.VideoDownloadParameter;
+import download.VideoDownloadTask;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -47,17 +47,17 @@ public class Controller implements Initializable {
     @FXML
     private Label downloadDirectoryView;
     @FXML
-    private TableColumn<VideoDownloadParameter, String> videoTitleColumn;
+    private TableColumn<VideoDownloadTask, String> videoTitleColumn;
     @FXML
-    private TableColumn<VideoDownloadParameter, String> videoProfileColumn;
+    private TableColumn<VideoDownloadTask, String> videoProfileColumn;
     @FXML
-    private TableColumn<VideoDownloadParameter, File> downloadDirectoryColumn;
+    private TableColumn<VideoDownloadTask, File> downloadDirectoryColumn;
     @FXML
-    private TableView<VideoDownloadParameter> downloadList;
+    private TableView<VideoDownloadTask> downloadList;
     @FXML
-    private TableColumn<VideoDownloadParameter, String> downloadStatusColumn;
+    private TableColumn<VideoDownloadTask, String> downloadStatusColumn;
     @FXML
-    private TableColumn<VideoDownloadParameter, Double> downloadProgressColumn;
+    private TableColumn<VideoDownloadTask, Double> downloadProgressColumn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -76,21 +76,21 @@ public class Controller implements Initializable {
     }
 
     private void addDownloadTask(@NotNull String[] urls) {
-        ArrayList<VideoDownloadParameter> params = new ArrayList<>();
+        ArrayList<VideoDownloadTask> params = new ArrayList<>();
         for (String url : urls) {
             url = url.trim();
             if (url.isEmpty()) {
                 continue;
             }
 
-            params.add(new VideoDownloadParameter(url, pathRecord.getPath()));
+            params.add(new VideoDownloadTask(url, pathRecord.getPath()));
         }
 
         addDownloadTask(params);
     }
 
-    private void addDownloadTask(@NotNull List<VideoDownloadParameter> params) {
-        for (VideoDownloadParameter param : params) {
+    private void addDownloadTask(@NotNull List<VideoDownloadTask> params) {
+        for (VideoDownloadTask param : params) {
             downloadList.getItems().add(param);
             downloadLooper.postTask(new DownloadTask(param));
             downloadLooper.postTask(new SaveDownloadHistoryTask());
@@ -177,38 +177,38 @@ public class Controller implements Initializable {
             return;
         }
 
-        VideoDownloadParameter taskNeedRemove = downloadList.getSelectionModel().getSelectedItem();
+        VideoDownloadTask taskNeedRemove = downloadList.getSelectionModel().getSelectedItem();
         downloadLooper.removeTask(taskNeedRemove);
         downloadList.getItems().remove(taskNeedRemove);
     }
 
-    private class ReadDownloadHistoryTask extends AsyncTask<VideoDownloadParameter[]> {
+    private class ReadDownloadHistoryTask extends AsyncTask<VideoDownloadTask[]> {
 
         public ReadDownloadHistoryTask() {
             super(null, 0);
         }
 
         @Override
-        public VideoDownloadParameter[] runTask() {
+        public VideoDownloadTask[] runTask() {
             if (!DOWNLOAD_HISTORY_FILE.exists()) {
-                return new VideoDownloadParameter[0];
+                return new VideoDownloadTask[0];
             }
 
             try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(DOWNLOAD_HISTORY_FILE))) {
                 Object data = inputStream.readObject();
-                if (data instanceof VideoDownloadParameter[]) {
-                    return (VideoDownloadParameter[]) data;
+                if (data instanceof VideoDownloadTask[]) {
+                    return (VideoDownloadTask[]) data;
                 }
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (@NotNull IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
 
 
-            return new VideoDownloadParameter[0];
+            return new VideoDownloadTask[0];
         }
 
         @Override
-        public void postTaskOnUi(VideoDownloadParameter[] result) {
+        public void postTaskOnUi(VideoDownloadTask[] result) {
             addDownloadTask(Arrays.asList(result));
         }
 
@@ -223,7 +223,7 @@ public class Controller implements Initializable {
         @Override
         public void run() {
             try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(DOWNLOAD_HISTORY_FILE))) {
-                outputStream.writeObject(downloadList.getItems().toArray(new VideoDownloadParameter[0]));
+                outputStream.writeObject(downloadList.getItems().toArray(new VideoDownloadTask[0]));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -233,22 +233,22 @@ public class Controller implements Initializable {
 
     private class DownloadTask extends AsyncTask<Void> {
 
-        private final VideoDownloadParameter videoDownloadParameter;
+        private final VideoDownloadTask videoDownloadTask;
 
-        public DownloadTask(VideoDownloadParameter videoDownloadParameter) {
-            super(videoDownloadParameter, 0);
-            this.videoDownloadParameter = videoDownloadParameter;
+        public DownloadTask(VideoDownloadTask videoDownloadTask) {
+            super(videoDownloadTask, 0);
+            this.videoDownloadTask = videoDownloadTask;
         }
 
         @Override
         public Void runTask() {
-            videoDownload.download(videoDownloadParameter);
+            videoDownload.download(videoDownloadTask);
             return null;
         }
 
         @Override
         public void preTaskOnUi() {
-            downloadList.scrollTo(videoDownloadParameter);
+            downloadList.scrollTo(videoDownloadTask);
         }
 
         @Override

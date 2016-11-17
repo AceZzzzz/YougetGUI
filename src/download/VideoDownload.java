@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 public class VideoDownload extends Executor {
 
     private final StringProperty speed = new SimpleStringProperty();
-    private VideoDownloadParameter videoDownloadParameter = new VideoDownloadParameter();
+    @NotNull
+    private VideoDownloadTask videoDownloadTask = new VideoDownloadTask();
 
     public VideoDownload() {
         super(VideoDownload.class, "you-get-0.4.575-win32.exe");
@@ -42,23 +43,24 @@ public class VideoDownload extends Executor {
         return speed.get();
     }
 
+    @NotNull
     public StringProperty speedProperty() {
         return speed;
     }
 
     private void updateVideoProfileOnUiThread(@NotNull String profile) {
-        Platform.runLater(() -> videoDownloadParameter.setVideoProfile(profile));
+        Platform.runLater(() -> videoDownloadTask.setVideoProfile(profile));
     }
 
     private void updateTitleOnUiThread(@NotNull String title) {
-        Platform.runLater(() -> videoDownloadParameter.setTitle(title));
+        Platform.runLater(() -> videoDownloadTask.setTitle(title));
     }
 
-    private void updateDownloadDataOnUiThread(@NotNull VideoDownloadParameter videoDownloadParameter) {
+    private void updateDownloadDataOnUiThread(@NotNull VideoDownloadTask videoDownloadTask) {
         Platform.runLater(() -> {
-            this.videoDownloadParameter = videoDownloadParameter;
-            videoDownloadParameter.setProgress(Double.NEGATIVE_INFINITY);
-            videoDownloadParameter.setStatus("");
+            this.videoDownloadTask = videoDownloadTask;
+            videoDownloadTask.setProgress(Double.NEGATIVE_INFINITY);
+            videoDownloadTask.setStatus("");
         });
     }
 
@@ -66,19 +68,19 @@ public class VideoDownload extends Executor {
         Platform.runLater(() -> VideoDownload.this.speed.set(speed));
     }
 
-    public void download(VideoDownloadParameter videoDownloadParameter) {
-        updateDownloadDataOnUiThread(videoDownloadParameter);
-        execute(videoDownloadParameter, false);
+    public void download(@NotNull VideoDownloadTask videoDownloadTask) {
+        updateDownloadDataOnUiThread(videoDownloadTask);
+        execute(videoDownloadTask, false);
         updateSpeedOnUiThread("");
         updateProgressOnUiThread(1);
     }
 
     private void updateProgressOnUiThread(double progress) {
-        Platform.runLater(() -> videoDownloadParameter.setProgress(progress));
+        Platform.runLater(() -> videoDownloadTask.setProgress(progress));
     }
 
-    private void updateProgressStatusOnUiThread(String status) {
-        Platform.runLater(() -> videoDownloadParameter.setStatus(status.trim()));
+    private void updateProgressStatusOnUiThread(@NotNull String status) {
+        Platform.runLater(() -> videoDownloadTask.setStatus(status.trim()));
     }
 
     @Override
