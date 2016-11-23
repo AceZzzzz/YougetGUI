@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class VideoDownload extends Executor {
 
-    private final StringProperty speed = new SimpleStringProperty();
+    private final StringProperty downloadSpeed = new SimpleStringProperty();
     @NotNull
     private VideoDownloadTask videoDownloadTask = new VideoDownloadTask();
 
     public VideoDownload() {
-        super(VideoDownload.class, "you-get-0.4.575-win32.exe");
+        super(VideoDownload.class, "you-get-0.4.595-win32.exe");
         executorOutputMessage.addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 return;
@@ -21,66 +21,48 @@ public class VideoDownload extends Executor {
 
             final String title = YougetUtil.getTitle(newValue);
             if (title != null) {
-                updateTitleOnUiThread(title);
+                Platform.runLater(() -> videoDownloadTask.setTitle(title));
             }
 
             final String videoProfile = YougetUtil.getVideoProfile(newValue);
             if (videoProfile != null) {
-                updateVideoProfileOnUiThread(videoProfile);
+                Platform.runLater(() -> videoDownloadTask.setVideoProfile(videoProfile));
             }
 
             final YougetUtil.DownloadProgress downloadProgress = YougetUtil.getDownloadProgress(newValue);
             if (downloadProgress != null) {
-                updateProgressStatusOnUiThread(downloadProgress.description);
-                updateProgressOnUiThread(downloadProgress.downloaded / downloadProgress.total);
+                Platform.runLater(() -> {
+                    videoDownloadTask.setStatus(downloadProgress.description.trim());
+                    videoDownloadTask.setProgress(downloadProgress.downloaded / downloadProgress.total);
+                });
             }
 
-            updateSpeedOnUiThread(YougetUtil.getSpeed(newValue));
+            Platform.runLater(() -> downloadSpeed.set(YougetUtil.getSpeed(newValue)));
         });
     }
 
-    public String getSpeed() {
-        return speed.get();
+    public String getDownloadSpeed() {
+        return downloadSpeed.get();
     }
 
     @NotNull
-    public StringProperty speedProperty() {
-        return speed;
+    public StringProperty downloadSpeedProperty() {
+        return downloadSpeed;
     }
 
-    private void updateVideoProfileOnUiThread(@NotNull String profile) {
-        Platform.runLater(() -> videoDownloadTask.setVideoProfile(profile));
-    }
-
-    private void updateTitleOnUiThread(@NotNull String title) {
-        Platform.runLater(() -> videoDownloadTask.setTitle(title));
-    }
-
-    private void updateDownloadDataOnUiThread(@NotNull VideoDownloadTask videoDownloadTask) {
+    public void download(@NotNull VideoDownloadTask task) {
         Platform.runLater(() -> {
-            this.videoDownloadTask = videoDownloadTask;
-            videoDownloadTask.setProgress(Double.NEGATIVE_INFINITY);
-            videoDownloadTask.setStatus("");
+            this.videoDownloadTask = task;
+            task.setProgress(Double.NEGATIVE_INFINITY);
+            task.setStatus("");
         });
-    }
 
-    private void updateSpeedOnUiThread(String speed) {
-        Platform.runLater(() -> VideoDownload.this.speed.set(speed));
-    }
+        execute(task, false);
 
-    public void download(@NotNull VideoDownloadTask videoDownloadTask) {
-        updateDownloadDataOnUiThread(videoDownloadTask);
-        execute(videoDownloadTask, false);
-        updateSpeedOnUiThread("");
-        updateProgressOnUiThread(1);
-    }
-
-    private void updateProgressOnUiThread(double progress) {
-        Platform.runLater(() -> videoDownloadTask.setProgress(progress));
-    }
-
-    private void updateProgressStatusOnUiThread(@NotNull String status) {
-        Platform.runLater(() -> videoDownloadTask.setStatus(status.trim()));
+        Platform.runLater(() -> {
+            downloadSpeed.set("");
+            task.setProgress(1);
+        });
     }
 
     @Override

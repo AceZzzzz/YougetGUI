@@ -69,7 +69,7 @@ public class Controller implements Initializable {
         videoTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
         downloadDirectoryView.textProperty().bind(new NullableObjectStringFormatter<>(pathRecord.pathProperty()));
-        downloadSpeedView.textProperty().bind(videoDownload.speedProperty());
+        downloadSpeedView.textProperty().bind(videoDownload.downloadSpeedProperty());
 
         downloadHistoryLooper.postTask(new ReadDownloadHistoryTask());
         Platform.runLater(this::addExitListener);
@@ -200,7 +200,7 @@ public class Controller implements Initializable {
                     return (VideoDownloadTask[]) data;
                 }
             } catch (@NotNull IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                LOGGER.error("ReadDownloadHistoryTask", e);
             }
 
 
@@ -225,7 +225,7 @@ public class Controller implements Initializable {
             try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(DOWNLOAD_HISTORY_FILE))) {
                 outputStream.writeObject(downloadList.getItems().toArray(new VideoDownloadTask[0]));
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("SaveDownloadHistoryTask", e);
             }
         }
 

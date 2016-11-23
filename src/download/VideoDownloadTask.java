@@ -1,5 +1,6 @@
 package download;
 
+import com.getting.util.annotation.UiThread;
 import com.getting.util.executor.ExecuteTask;
 import javafx.beans.property.*;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +52,7 @@ public class VideoDownloadTask extends ExecuteTask implements Externalizable {
         return videoProfile.get();
     }
 
+    @UiThread
     public void setVideoProfile(String videoProfile) {
         this.videoProfile.set(videoProfile);
     }
@@ -59,6 +61,7 @@ public class VideoDownloadTask extends ExecuteTask implements Externalizable {
         return progress.get();
     }
 
+    @UiThread
     public void setProgress(double progress) {
         this.progress.set(progress);
     }
@@ -81,6 +84,7 @@ public class VideoDownloadTask extends ExecuteTask implements Externalizable {
         return title.get();
     }
 
+    @UiThread
     public void setTitle(String title) {
         this.title.set(title);
     }
@@ -108,6 +112,7 @@ public class VideoDownloadTask extends ExecuteTask implements Externalizable {
         return status.get();
     }
 
+    @UiThread
     public void setStatus(String status) {
         this.status.set(status);
     }
@@ -118,25 +123,17 @@ public class VideoDownloadTask extends ExecuteTask implements Externalizable {
     }
 
     @Override
-    public void writeExternal(@NotNull ObjectOutput out) {
-        try {
-            out.writeObject(url.get());
-            out.writeObject(title.get());
-            out.writeObject(downloadDirectory.get());
-        } catch (IOException e) {
-            LOGGER.error("writeExternal", e);
-        }
+    public void writeExternal(@NotNull ObjectOutput out) throws IOException {
+        out.writeObject(url.get());
+        out.writeObject(title.get());
+        out.writeObject(downloadDirectory.get());
     }
 
     @Override
-    public void readExternal(@NotNull ObjectInput in) {
-        try {
-            url.set((String) in.readObject());
-            title.set((String) in.readObject());
-            downloadDirectory.set((File) in.readObject());
-        } catch (@NotNull ClassNotFoundException | IOException e) {
-            LOGGER.error("readExternal", e);
-        }
+    public void readExternal(@NotNull ObjectInput in) throws IOException, ClassNotFoundException {
+        url.set((String) in.readObject());
+        title.set((String) in.readObject());
+        downloadDirectory.set((File) in.readObject());
     }
 
 }
