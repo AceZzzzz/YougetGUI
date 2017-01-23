@@ -105,6 +105,9 @@ public class Controller implements Initializable {
             downloadHistoryLooper.postTask(new SaveDownloadHistoryTask());
 
             if (downloadLooper.isAllDone()) {
+                downloadLooper.removeAllTasks();
+                downloadLooper.quit();
+                downloadHistoryLooper.quit();
                 return;
             }
 
@@ -113,6 +116,8 @@ public class Controller implements Initializable {
             notification.getActions().clear();
             notification.getActions().add(new Action("退出", actionEvent -> {
                 downloadLooper.removeAllTasks();
+                downloadLooper.quit();
+                downloadHistoryLooper.quit();
                 Platform.exit();
             }));
             notification.show("还有视频在下载，确认退出？");
