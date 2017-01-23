@@ -13,7 +13,7 @@ public class VideoDownload extends Executor {
     private VideoDownloadTask videoDownloadTask = new VideoDownloadTask();
 
     public VideoDownload() {
-        super(VideoDownload.class, "you-get-0.4.595-win32.exe");
+        super(VideoDownload.class, "you-get-0.4.626-win32.exe");
         executorOutputMessage.addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 return;
